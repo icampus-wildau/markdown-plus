@@ -1,0 +1,10 @@
+{
+    "header": "Examples",
+    "info": "Examples showing the basic usage of the module.",
+    "examples": {
+        "order": [
+            "example1.py"
+        ]
+    }
+
+}
