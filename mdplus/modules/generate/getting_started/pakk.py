@@ -22,7 +22,8 @@ class PakkGettingStarted(MdpModule):
         # Parse pakk.cfg using configparser
         if not self.is_applicable():
             logger.warning("pakk.cfg not found in the root directory")
-
+        
+        logger.debug(f"Parsing pakk.cfg in {self.root}")
         parser = ConfigParser()
         parser.read(os.path.join(self.root, "pakk.cfg"))
 

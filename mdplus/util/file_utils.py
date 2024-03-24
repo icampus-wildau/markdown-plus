@@ -40,13 +40,27 @@ def hasFiles(dirPath, files: List[str]):
 
     return existingCount == len(files)
 
+def linux_path(path):
+    return os.path.normpath(path).replace("\\", "/")
 
 def get_relative_path(path, root):
-    return "." + path[len(root) :]
-    # return os.path.join("./", path[len(root):])
+    # Check if the path is a subdirectory of the root
+    if path.startswith(root):
+      return linux_path(os.path.join(".", path[len(root):]))
+  
+    # Otherwise, we have to go up the directory tree
+    
+    
+    # Get the common prefix of the path and the root
+    common = os.path.commonprefix([path, root])
+    # Get the relative path from the common prefix to the root
+    relative = os.path.relpath(common, root)
+    # Get the relative path from the common prefix to the path
+    p = os.path.join(relative, os.path.relpath(path, common))
+    return linux_path(p)
 
 
 def join_relative_path(root, path):
     if path.startswith("./"):
         path = path[2:]
-    return os.path.join(root, path)
+    return linux_path(os.path.join(root, path))

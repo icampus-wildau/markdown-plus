@@ -2,7 +2,7 @@ import re
 import string
 from typing import List, Tuple
 
-from mdplus.core import Replacement
+# from mdplus.core import Replacement
 
 headers = re.compile(r"#+ .*")
 headers_inside_code = re.compile(r"```(.|[\n\s$^])*?(# .*?\n)(.|[\n\s$^])*?```")
@@ -10,7 +10,8 @@ headers_inside_code = re.compile(r"```(.|[\n\s$^])*?(# .*?\n)(.|[\n\s$^])*?```")
 code_block_pattern = re.compile(r"```(.|[\n\s$^])*?```")
 
 
-def adapt_header_level(markdown: str | Replacement, count: int):
+# def adapt_header_level(markdown: str | Replacement, count: int):
+def adapt_header_level(markdown: str, count: int):
     if count < 0:
         count = 0
 

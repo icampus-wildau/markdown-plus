@@ -7,7 +7,7 @@ from mdplus.util.file_utils import join_relative_path
 from mdplus.util.parser.ros2_parser import Package
 
 import mdplus.modules.ros.launchs as launchs
-import mdplus.modules.ros.msgs as msgs
+import mdplus.modules.ros.interfaces as interfaces
 import mdplus.modules.ros.nodes as nodes
 
 from mdplus.util.markdown import adapt_header_level
@@ -34,7 +34,7 @@ def main(*args, **kwargs):
         adapt_header_level(launchs.main(*args, **kwargs), 1),
         adapt_header_level(nodes.main(*args, **kwargs), 1),
         # adapt_header_level(topics.main(*args, **kwargs), 1),
-        adapt_header_level(msgs.main(*args, **kwargs), 1),
+        adapt_header_level(interfaces.main(*args, **kwargs), 1),
     ])
 
     return "\n\n".join(content)

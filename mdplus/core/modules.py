@@ -78,8 +78,11 @@ class MdpModule:
     def __init__(self, command: str, arguments: dict[str, any]):
         self.command = command
         self.arguments = arguments
+        self.origin_text = ""
         
         self.root = self.get_arg("root", None)
+        self.file_path = self.get_arg("file_dir", None)
+        self.file_dir = self.get_arg("file_dir", None)        
         
         self.end_tag = f"<!-- MD+FIN:{command} -->"
         
@@ -269,6 +272,7 @@ class MdpModule:
                 arguments = MdpModule.parse_arguments(arguments)
                 arguments.update(context)
                 module: MdpModule = module_cls(command, arguments)
+                module.origin_text = text[match.start():match.end()]
                 modules.append(module)
                 
                 # Find end tag for that module and continue search

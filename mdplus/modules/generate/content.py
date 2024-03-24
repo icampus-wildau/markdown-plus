@@ -19,7 +19,7 @@ class ContentMdpModule(MdpModule):
     def __init__(self, command: str, arguments: dict[str, any]):
         super().__init__(command, arguments)
 
-        self.arg_header = self.get_arg("header", "# Content")
+        self.arg_header = self.get_arg("header", "# Contents of this Repository")
 
     def get_content(self) -> str:
         

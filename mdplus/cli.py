@@ -49,6 +49,7 @@ def config():
 @execute.command(aliases=["p"])
 @click.option("--verbose", "-v", is_flag=True, help="Print more output.")
 @click.option("--recursive", "-r", is_flag=True, help="Parse all subdirectories.")
+@click.option("--root", "-R", help="Root directory parsing the repo.")
 @click.argument(
     "files_or_dirs",
     nargs=-1,
@@ -62,10 +63,18 @@ def parse(files_or_dirs, **kwargs: str):
     """
     logger.setLevel(logging.DEBUG if kwargs.get("verbose") else logging.INFO)
     
+    root = None
     # If no dirname is specified, use the current working directory
     if files_or_dirs is None or len(files_or_dirs) == 0:
         files_or_dirs = (os.getcwd(), )
     
+    if len(files_or_dirs) == 1 and os.path.isdir(files_or_dirs[0]):
+        root = files_or_dirs[0]
+        
+    if "root" in kwargs and kwargs["root"] is not None:
+        root = os.path.abspath(kwargs["root"])
+        
+        
     logger.debug(f"Starting parsing of {files_or_dirs}")
     
     
@@ -76,10 +85,10 @@ def parse(files_or_dirs, **kwargs: str):
     for file_or_dir in files_or_dirs:
         if os.path.isdir(file_or_dir):
             if recursive:
-                for root, dirs, files in os.walk(file_or_dir):
+                for root_dir, dirs, files in os.walk(file_or_dir):
                     for file in files:
                         if file.endswith(".md"):
-                            md_files.append(os.path.join(root, file))
+                            md_files.append(os.path.join(root_dir, file))
             else:
                 for file in os.listdir(file_or_dir):
                     if file.endswith(".md"):
@@ -91,7 +100,7 @@ def parse(files_or_dirs, **kwargs: str):
     # document = Document()
 
     for md_file in md_files:
-        document = Document(md_file)
+        document = Document(md_file, {"root": root})
         document.write()
 
 if __name__ == "__main__":
