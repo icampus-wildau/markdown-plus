@@ -146,6 +146,7 @@ class MdpModule:
         str
             The entry of the module.
         """
+        logger.info("Generating entry for %s", self.command)
         return "\n".join([self.get_start_tag(), self.get_content(), self.end_tag])
     
     def get_content(self) -> str:
