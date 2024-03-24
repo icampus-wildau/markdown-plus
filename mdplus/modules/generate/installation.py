@@ -7,6 +7,7 @@ import json
 
 from mdplus.util.file_utils import join_relative_path
 from mdplus.util.hooks import Hooks
+from mdplus.core.modules import MdpModule
 
 logger = logging.getLogger(__name__)
 
@@ -113,4 +114,13 @@ def main(*args, **kwargs):
     return "\n\n".join(content)
 
 
+class InstallationModule(MdpModule):
 
+    def __init__(self, command: str, arguments: str):
+        super().__init__(command, arguments)
+
+    def get_content(self):
+        return "INSTALL"
+
+
+module = InstallationModule
