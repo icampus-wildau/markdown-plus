@@ -157,6 +157,7 @@ class GeneratedDocument(Document):
             except Exception as e:
                 logger.error(f"Error in module {module.command}: {e}")
                 s += module.origin_text
+                # raise e
 
         return s
 
@@ -164,8 +165,9 @@ class GeneratedDocument(Document):
         if file_path is None:
             file_path = self.full_path
 
+        content = self.get_generated_content()
         with open(file_path, "w", encoding="utf-8") as f:
-            f.write(self.get_generated_content())
+            f.write(content)
 
 
 

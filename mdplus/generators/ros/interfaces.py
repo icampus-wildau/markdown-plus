@@ -1,11 +1,17 @@
+from __future__ import annotations
 import logging
 from typing import Dict, List
 
 from markdownTable import markdownTable
 
+from mdplus.core.environments.ros2 import Ros2Environment
 from mdplus.util.parser.ros2_parser import Package, PackageType
 from mdplus.util.markdown import get_anchor_from_header
 
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from mdplus.core.documents.document import Document
+    from mdplus.core.documents.block import MdpBlock
 
 logger = logging.getLogger(__name__)
 
@@ -13,20 +19,20 @@ from mdplus.core.generator import MdpGenerator
 
 
 class RosInterfacesMdpModule(MdpGenerator):
-    def __init__(self, command: str, arguments: Dict[str, any]):
-        super().__init__(command, arguments)
+    def __init__(self, document: Document, mdpBlock: MdpBlock):
+        super().__init__(document, mdpBlock)
 
         self.arg_header = self.get_arg("header", "# ROS Interface Definitions")
 
     def get_content(self) -> str:
         """Creates a table of messages and services found in the ROS-packages"""
 
-        dir_path = self.root
+
+        dir_path = self.workspace.root_dir
         logger.info(f"Create ROS message and service information for {dir_path}")
 
-        packages: list[Package] = self.arguments.get(
-            "packages", Package.getPackages(dir_path)
-        )
+        env = self.workspace.get_environment("ros2", env_class=Ros2Environment)
+        packages: list[Package] = env.packages
 
         content = list()
 
@@ -42,11 +48,11 @@ class RosInterfacesMdpModule(MdpGenerator):
                 if len(package.messages) > 0:
                     content.append(f"## Message definitions of {package.name}")
                     for message in package.messages:
-                        content.append(message.get_wiki_entry(3, self.file_dir))
+                        content.append(message.get_wiki_entry(3, self.document.dir_path))
                 if len(package.services) > 0:
                     content.append(f"## Service definitions of {package.name}")
                     for service in package.services:
-                        content.append(service.get_wiki_entry(3, self.file_dir))
+                        content.append(service.get_wiki_entry(3, self.document.dir_path))
 
         if len(content) == 1:
             content.append(
@@ -90,5 +96,3 @@ class RosInterfacesMdpModule(MdpGenerator):
             .getMarkdown()
         )
 
-
-module = RosInterfacesMdpModule

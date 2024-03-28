@@ -3,6 +3,8 @@ import logging
 import os
 
 from mdplus.core.documents.document import Document, GeneratedDocument
+from mdplus.core.environments.base import MdpEnvironment
+from typing import Type, TypeVar
 
 logger = logging.getLogger(__name__)
 
@@ -56,6 +58,7 @@ class Directory:
 
     
 
+T = TypeVar('T', bound=MdpEnvironment)
 
 class Workspace:
     """
@@ -64,6 +67,8 @@ class Workspace:
 
     def __init__(self, root: str):
         self.root_path = root
+
+        self.environments: dict[str, MdpEnvironment] = dict()
 
         self.directory_map: dict[str, Directory] = dict()
         self.document_map: dict[str, Document] = dict()
@@ -77,6 +82,13 @@ class Workspace:
                 logger.debug(f"Found generatable document: {doc.full_path}")
                 if len(doc.args) > 0:
                     logger.debug(f"\tArgs: {doc.args}")
+
+
+    def get_environment(self, name: str, env_class: Type[T] = MdpEnvironment) -> T:
+        if name not in self.environments:
+            self.environments[name] = env_class(self, name)
+        return self.environments[name]
+
 
     def process(self):
         for doc in self.generated_documents:

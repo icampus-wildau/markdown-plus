@@ -1,9 +1,11 @@
+from __future__ import annotations
 import os
 import logging
 from typing import Dict, List
 
 import re
 
+from mdplus.core.environments.ros2 import Ros2Environment
 from mdplus.util.file_utils import join_relative_path
 
 from mdplus.core.generator import MdpGenerator
@@ -15,6 +17,11 @@ from mdplus.util.parser.ros2_parser import Package, MessageType, ServiceType, Wo
 from mdplus.util.markdown import get_anchor_from_header, get_link, adapt_header_level
 import mdplus.util.file_utils as file_utils
 
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from mdplus.core.documents.document import Document
+    from mdplus.core.documents.block import MdpBlock
+
 import pandas as pd
 
 from mdplus.generators.flags import Flags
@@ -23,8 +30,8 @@ logger = logging.getLogger(__name__)
 
 
 class RosNodesMdpModule(MdpGenerator):
-    def __init__(self, command: str, arguments: Dict[str, any]):
-        super().__init__(command, arguments)
+    def __init__(self, document: Document, mdpBlock: MdpBlock):
+        super().__init__(document, mdpBlock)
 
         self.arg_header = self.get_arg("header", "# ROS Nodes")
         
@@ -59,15 +66,16 @@ class RosNodesMdpModule(MdpGenerator):
     def get_content(self) -> str:
         """Creates a table of nodes found in the ROS-packages"""
 
-        dir_path = self.root
+        dir_path = self.workspace.root_path
         logger.info(f"Create ROS node information for {dir_path}")
 
-        packages: list[Package] = self.arguments.get("packages", Package.getPackages(dir_path))
+        env = self.workspace.get_environment("ros2", env_class=Ros2Environment)
+        packages: list[Package] = env.packages
 
         content = list()
         content.append(self.arg_header)
 
-        content.append(self.get_nodes_table(packages, self.file_dir))
+        content.append(self.get_nodes_table(packages, self.document.dir_path))
 
         has_nodes = False
 
@@ -208,5 +216,3 @@ class RosNodesMdpModule(MdpGenerator):
 
         return "\n\n".join(content)
 
-
-module = RosNodesMdpModule
