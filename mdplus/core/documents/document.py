@@ -147,6 +147,8 @@ class GeneratedDocument(Document):
         self.origin_text = text
         self.modules = MdpGenerator.get_all_generators(text, self)
 
+        self.write()
+
     def get_generated_content(self):
         s = ""
         for module in self.modules:

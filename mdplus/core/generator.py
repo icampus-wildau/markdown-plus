@@ -72,7 +72,7 @@ class MdpGenerator:
         s = f"{start} MD+:{self.command} "
         if args_string != "":
             s += "\n" + args_string
-        s += f" {end}"
+        s += f"{end}"
         return s
 
     @property
@@ -130,7 +130,7 @@ class MdpGenerator:
             The entry of the module.
         """
         logger.info("Generating entry for %s", self.command)
-        return "\n".join([self.get_start_tag(), self.get_content(), self.end_tag])
+        return "\n".join([self.start_tag, self.get_content(), self.end_tag])
     
     def get_content(self) -> str:
         """Generate the content of the module.

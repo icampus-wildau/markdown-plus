@@ -59,7 +59,7 @@ class PakkGettingStarted(MdpGenerator):
             )
             lines.append("```bash")
             lines.append(
-                f"pakk start {self.package_short_name}  # Start the package until being stopped or system reboot, or ..."
+                f"pakk start {self.package_short_name}  # Run as a service until a reboot / manual stop, or ..."
             )
             lines.append(
                 f"pakk enable {self.package_short_name}  # ... start it now and on every system boot.  "
