@@ -1,14 +1,14 @@
 from __future__ import annotations
 from configparser import ConfigParser
 import os
-from mdplus.core.modules import MdpModule
+from mdplus.core.generator import MdpGenerator
 
 import logging
 
 logger = logging.getLogger(__name__)
 
 
-class PakkGettingStarted(MdpModule):
+class PakkGettingStarted(MdpGenerator):
     def __init__(self, command: str, arguments: dict[str, any]):
         super().__init__(command, arguments)
 
@@ -23,16 +23,19 @@ class PakkGettingStarted(MdpModule):
         if not self.is_applicable():
             logger.warning("pakk.cfg not found in the root directory")
         
-        logger.debug(f"Parsing pakk.cfg in {self.root}")
+        logger.debug(f"Parsing pakk.cfg in {self.workspace.root_path}")
         parser = ConfigParser()
-        parser.read(os.path.join(self.root, "pakk.cfg"))
+        parser.read(os.path.join(self.workspace.root_path, "pakk.cfg"))
 
         self.package_name = parser.get("info", "id")
         self.package_short_name = self.package_name.split("/")[-1]
 
+
+        
+
     def is_applicable(self) -> bool:
         # Search for pakk.cfg in the root directory
-        if os.path.isfile(os.path.join(self.root, "pakk.cfg")):
+        if os.path.isfile(os.path.join(self.workspace.root_path, "pakk.cfg")):
             return True
 
         return False

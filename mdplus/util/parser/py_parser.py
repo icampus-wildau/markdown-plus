@@ -10,7 +10,7 @@ from typing import Any, Dict, List, Tuple, TypeVar, Type
 
 from mistletoe import Document
 
-from mdplus.modules.flags import Flags
+from mdplus.generators.flags import Flags
 
 T = TypeVar("T")
 

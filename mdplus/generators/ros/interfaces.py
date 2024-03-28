@@ -9,10 +9,10 @@ from mdplus.util.markdown import get_anchor_from_header
 
 logger = logging.getLogger(__name__)
 
-from mdplus.core.modules import MdpModule
+from mdplus.core.generator import MdpGenerator
 
 
-class RosInterfacesMdpModule(MdpModule):
+class RosInterfacesMdpModule(MdpGenerator):
     def __init__(self, command: str, arguments: Dict[str, any]):
         super().__init__(command, arguments)
 

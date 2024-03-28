@@ -1,7 +1,7 @@
 import os
 import logging
 
-from mdplus.core.modules import MdpModule
+from mdplus.core.generator import MdpGenerator
 from mdplus.util.file_utils import join_relative_path
 from mdplus.config import ExamplesConfig
 
@@ -14,7 +14,7 @@ from mdplus.util.hooks import Hooks
 logger = logging.getLogger(__name__)
 
 
-class ContentMdpModule(MdpModule):
+class ContentMdpGenerator(MdpGenerator):
     """Creates a table of contents of the given directory"""
     def __init__(self, command: str, arguments: dict[str, any]):
         super().__init__(command, arguments)
@@ -60,11 +60,11 @@ class ContentMdpModule(MdpModule):
 
                     # Check if dir has a README.md file
                     elif os.path.isfile(os.path.join(dir, "README.md")):
-                        # Extract the first row of this file
+                        # Extract the first line of this file
                         with open(os.path.join(dir, "README.md"), "r", encoding="utf-8") as f:
                             logger.info(f"Read contents of {os.path.join(dir, 'README.md')}")
 
-                            # Search for the first row of the file that is not a header
+                            # Search for the first line of the file that is not a header
                             lines = [l.strip() for l in f.readlines()]
                             lines = [l for l in lines if len(l) > 0]
                             found = False
@@ -94,6 +94,3 @@ class ContentMdpModule(MdpModule):
             content.append(markdownTable(mkdict).setParams(row_sep="markdown", quote=False).getMarkdown())
 
             return "\n\n".join(content)
-
-
-module = ContentMdpModule

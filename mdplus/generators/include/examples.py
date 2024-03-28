@@ -10,10 +10,10 @@ from mdplus.util.markdown import get_header
 from mdplus.util.regex import replace_pattern
 from mdplus.util.file_utils import join_relative_path
 
-from mdplus.modules.flags import Flags
+from mdplus.generators.flags import Flags
 from mdplus.config import ExamplesConfig, Examples
 
-import mdplus.modules.include.example as example
+import mdplus.generators.include.example as example
 
 from mdplus.util.markdown import adapt_header_level
 

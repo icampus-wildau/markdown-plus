@@ -2,7 +2,7 @@ import logging
 from typing import Dict
 
 
-from mdplus.core.modules import MdpModule
+from mdplus.core.generator import MdpGenerator
 
 from markdownTable import markdownTable
 
@@ -14,7 +14,7 @@ import mdplus.util.file_utils as file_utils
 logger = logging.getLogger(__name__)
 
 
-class RosLaunchMdpModule(MdpModule):
+class RosLaunchMdpModule(MdpGenerator):
     def __init__(self, command: str, arguments: Dict[str, any]):
         super().__init__(command, arguments)
 

@@ -9,7 +9,7 @@ from mdplus.util.markdown import get_header
 from mdplus.util.regex import replace_pattern
 from mdplus.util.file_utils import join_relative_path
 
-from mdplus.modules.flags import Flags
+from mdplus.generators.flags import Flags
 
 logger = logging.getLogger(__name__)
 

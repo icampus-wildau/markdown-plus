@@ -6,7 +6,7 @@ import re
 
 from mdplus.util.file_utils import join_relative_path
 
-from mdplus.core.modules import MdpModule
+from mdplus.core.generator import MdpGenerator
 
 from markdownTable import markdownTable
 
@@ -17,12 +17,12 @@ import mdplus.util.file_utils as file_utils
 
 import pandas as pd
 
-from mdplus.modules.flags import Flags
+from mdplus.generators.flags import Flags
 
 logger = logging.getLogger(__name__)
 
 
-class RosNodesMdpModule(MdpModule):
+class RosNodesMdpModule(MdpGenerator):
     def __init__(self, command: str, arguments: Dict[str, any]):
         super().__init__(command, arguments)
 

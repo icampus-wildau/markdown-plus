@@ -11,9 +11,10 @@ import importlib
 import importlib.util
 import importlib.resources
 
+from mdplus.core.documents.structure import Workspace
 from numpy import info
 
-from mdplus.core.markdown import Document
+from mdplus.core.documents.document import Document
 
 # from mdplus.logger import Logger
 # from mdplus.util.hooks import Hooks
@@ -78,6 +79,10 @@ def parse(files_or_dirs, **kwargs: str):
     logger.debug(f"Starting parsing of {files_or_dirs}")
     
     
+    workspace = Workspace(root)
+    workspace.process()
+
+    return 
     # Find all fitting files in specified directories
     md_files = []
     recursive = kwargs.get("recursive")

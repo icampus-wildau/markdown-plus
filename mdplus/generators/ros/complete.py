@@ -6,9 +6,9 @@ from mdplus.util.file_utils import join_relative_path
 
 from mdplus.util.parser.ros2_parser import Package
 
-import mdplus.modules.ros.launchs as launchs
-import mdplus.modules.ros.interfaces as interfaces
-import mdplus.modules.ros.nodes as nodes
+import mdplus.generators.ros.launchs as launchs
+import mdplus.generators.ros.interfaces as interfaces
+import mdplus.generators.ros.nodes as nodes
 
 from mdplus.util.markdown import adapt_header_level
 

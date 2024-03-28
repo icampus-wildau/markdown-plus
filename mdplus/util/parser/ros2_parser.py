@@ -22,7 +22,7 @@ from enum import Enum
 
 
 import mdplus.util.file_utils as file_utils
-from mdplus.modules.flags import Flags
+from mdplus.generators.flags import Flags
 from mdplus.util.parser.py_parser import PyParserInplace, get_doc_string_content, PyParser
 
 logger = logging.getLogger(__name__)
