@@ -17,7 +17,7 @@ class Directory:
 
         workspace.directory_map[path] = self
 
-        self.readme: Document = None
+        self.readme: Document | None = None
 
         self.directories: list[Directory] = list()
         self.documents: list[Document] = list()

@@ -3,14 +3,19 @@ from configparser import ConfigParser
 import os
 from mdplus.core.generator import MdpGenerator
 
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from mdplus.core.documents.document import Document
+    from mdplus.core.documents.block import MdpBlock
+
 import logging
 
 logger = logging.getLogger(__name__)
 
 
-class PakkGettingStarted(MdpGenerator):
-    def __init__(self, command: str, arguments: dict[str, any]):
-        super().__init__(command, arguments)
+class PakkGettingStartedGenerator(MdpGenerator):
+    def __init__(self, document: Document, mdpBlock: MdpBlock):
+        super().__init__(document, mdpBlock)
 
         self.arg_header = self.get_arg(
             "header",
@@ -69,4 +74,3 @@ class PakkGettingStarted(MdpGenerator):
         return "\n".join(lines)
 
 
-module = PakkGettingStarted

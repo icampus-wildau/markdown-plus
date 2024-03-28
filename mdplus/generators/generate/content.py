@@ -1,23 +1,26 @@
+from __future__ import annotations
 import os
 import logging
 
 from mdplus.core.generator import MdpGenerator
-from mdplus.util.file_utils import join_relative_path
-from mdplus.config import ExamplesConfig
 
 from markdownTable import markdownTable
 
 import pandas as pd
 
-from mdplus.util.hooks import Hooks
 
 logger = logging.getLogger(__name__)
 
 
-class ContentMdpGenerator(MdpGenerator):
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from mdplus.core.documents.document import Document
+    from mdplus.core.documents.block import MdpBlock
+
+class ContentGenerator(MdpGenerator):
     """Creates a table of contents of the given directory"""
-    def __init__(self, command: str, arguments: dict[str, any]):
-        super().__init__(command, arguments)
+    def __init__(self, document: Document, mdpBlock: MdpBlock):
+        super().__init__(document, mdpBlock)
 
         self.arg_header = self.get_arg("header", "# Contents of this Repository")
 
@@ -26,7 +29,7 @@ class ContentMdpGenerator(MdpGenerator):
         content = list()
         content.append(self.arg_header)
 
-        dir_path = self.root
+        dir_path = self.workspace.root_path
 
         logger.info(f"Creating content of {dir_path}")
 
@@ -38,7 +41,9 @@ class ContentMdpGenerator(MdpGenerator):
             entries = dict()
 
             # Iterate over all directories in the given directory and search for README.md files
-            for file in os.listdir(dir_path):
+            files = os.listdir(dir_path)
+            files.sort()
+            for file in files:
                 if file.startswith(".") or file.startswith("_"):
                     continue
 
@@ -51,18 +56,22 @@ class ContentMdpGenerator(MdpGenerator):
                     if os.path.isfile(os.path.join(dir, "MDP_IGNORE")):
                         continue
 
-                    # Check if dir has a mdplus.json file
-                    mdplus_json = os.path.join(dir, "mdplus.json")
-                    if os.path.isfile(mdplus_json):
-                        mdplus_config = ExamplesConfig.from_file(mdplus_json)
-                        if mdplus_config.info:
-                            info = mdplus_config.info
+                    mdp_dir = self.workspace.directory_map.get(dir, None)
+                    need_parse = True
+                    
+                    # If there is a readme file in the directory, check for given args in that file
+                    if mdp_dir is not None:
+                        if mdp_dir.readme is not None:
+                            # If title is given in the args, use this as info
+                            if "title" in mdp_dir.readme.args:
+                                info = mdp_dir.readme.args["title"]
+                                need_parse = False
 
-                    # Check if dir has a README.md file
-                    elif os.path.isfile(os.path.join(dir, "README.md")):
+                    # If there are no md+ args, parse the readme file
+                    if need_parse and mdp_dir.readme is not None:
                         # Extract the first line of this file
-                        with open(os.path.join(dir, "README.md"), "r", encoding="utf-8") as f:
-                            logger.info(f"Read contents of {os.path.join(dir, 'README.md')}")
+                        with open(mdp_dir.readme.full_path, "r", encoding="utf-8") as f:
+                            logger.debug(f"Read contents of {os.path.join(dir, 'README.md')}")
 
                             # Search for the first line of the file that is not a header
                             lines = [l.strip() for l in f.readlines()]
