@@ -60,7 +60,7 @@ def main(*args, **kwargs):
                         included_files.add(f_path)
                         content.append(example.main(os.path.join(path, file), **kwargs))
 
-        print(content)
+        # print(content)
         # content = [adapt_header_level(c, 1) for c in content]
         for replacement in content:
             replacement.adapt_header_level(1)

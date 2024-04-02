@@ -30,6 +30,7 @@ class PakkGettingStartedGenerator(MdpGenerator):
         # Parse pakk.cfg using configparser
         if not self.is_applicable():
             logger.warning("pakk.cfg not found in the root directory")
+            return
 
         logger.debug(f"Parsing pakk.cfg in {self.workspace.root_path}")
         parser = ConfigParser()

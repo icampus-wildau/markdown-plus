@@ -42,7 +42,7 @@ class RosLaunchMdpModule(MdpGenerator):
 
         for package in packages:
             if package.package_type == PackageType.PYTHON:
-                print(package)
+                
                 if len(package.launch_scripts) > 0:
                     for script in package.launch_scripts:
                         scripts.append(

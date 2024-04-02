@@ -27,6 +27,10 @@ class Directory:
 
         self.path = path
         """The absolute path of the directory."""
+
+        self.dir_name = os.path.basename(path)
+        """The name of the directory."""
+
         self.workspace = workspace
         """The parent workspace."""
 
@@ -116,11 +120,19 @@ class Workspace:
         self.root_dir = Directory(root, self)
         """The root directory object of the workspace."""
 
+        self.top_level_readme: Document | None = self.root_dir.readme
+        """The top level readme document of the workspace."""
+
         if logging.DEBUG >= logging.root.level:
             for doc in self.generated_documents:
                 logger.debug(f"Found generatable document: {doc.full_path}")
                 if len(doc.args) > 0:
                     logger.debug(f"\tArgs: {doc.args}")
+
+    @property
+    def documents(self):
+        """All documents in the workspace."""
+        return self.document_map.values()
 
     def get_environment(self, name: str, env_class: Type[T] = MdpEnvironment) -> T:
         """Get an environment by name. If the environment does not exist, it will be created.

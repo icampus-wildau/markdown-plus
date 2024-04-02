@@ -68,6 +68,14 @@ class Document:
         self._args: dict[str, any] = None
         """MDP args of the document."""
 
+    def get_title(self) -> str:
+        """Get the title of the document."""
+
+        if "title" in self.args:
+            return self.args["title"]
+
+        return None
+
     @property
     def args(self) -> dict[str, any]:
         if self._args is None:
