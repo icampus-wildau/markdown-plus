@@ -1,17 +1,18 @@
 from __future__ import annotations
+
 import logging
-from typing import Dict, List
+from typing import TYPE_CHECKING, Dict, List
 
 from markdownTable import markdownTable
 
 from mdplus.core.environments.ros2 import Ros2Environment
-from mdplus.util.parser.ros2_parser import Package, PackageType
 from mdplus.util.markdown import get_anchor_from_header
+from mdplus.util.parser.ros2_parser import Package, PackageType
+from overrides import overrides
 
-from typing import TYPE_CHECKING
 if TYPE_CHECKING:
-    from mdplus.core.documents.document import Document
     from mdplus.core.documents.block import MdpBlock
+    from mdplus.core.documents.document import Document
 
 logger = logging.getLogger(__name__)
 
@@ -24,9 +25,9 @@ class RosInterfacesMdpModule(MdpGenerator):
 
         self.arg_header = self.get_arg("header", "# ROS Interface Definitions")
 
+    @overrides
     def get_content(self) -> str:
         """Creates a table of messages and services found in the ROS-packages"""
-
 
         dir_path = self.workspace.root_dir
         logger.info(f"Create ROS message and service information for {dir_path}")
@@ -55,9 +56,7 @@ class RosInterfacesMdpModule(MdpGenerator):
                         content.append(service.get_wiki_entry(3, self.document.dir_path))
 
         if len(content) == 1:
-            content.append(
-                f"This package has no custom message or service type definitions."
-            )
+            content.append(f"This package has no custom message or service type definitions.")
 
         return "\n\n".join(content)
 
@@ -90,9 +89,4 @@ class RosInterfacesMdpModule(MdpGenerator):
         msg_data.sort(key=lambda x: x["Name"])
         srv_data.sort(key=lambda x: x["Name"])
 
-        return (
-            markdownTable(msg_data + srv_data)
-            .setParams(row_sep="markdown", quote=False)
-            .getMarkdown()
-        )
-
+        return markdownTable(msg_data + srv_data).setParams(row_sep="markdown", quote=False).getMarkdown()

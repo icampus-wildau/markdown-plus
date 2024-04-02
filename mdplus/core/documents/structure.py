@@ -8,39 +8,61 @@ from typing import Type, TypeVar
 
 logger = logging.getLogger(__name__)
 
+
 class Directory:
     """
     A directory containing documents.
     """
 
     def __init__(self, path: str, workspace: Workspace):
-        self.path = path
-        self.workspace = workspace
+        """Initialize a new directory in the workspace.
 
+        Parameters
+        ----------
+        path : str
+            The absolute path of the directory.
+        workspace : Workspace
+            The parent workspace.
+        """
+
+        self.path = path
+        """The absolute path of the directory."""
+        self.workspace = workspace
+        """The parent workspace."""
+
+        # Store the directory in the workspace
         workspace.directory_map[path] = self
 
         self.readme: Document | None = None
+        """The readme document of the directory if existing."""
 
         self.directories: list[Directory] = list()
+        """Subdirectories of the directory."""
+
         self.documents: list[Document] = list()
-    
+        """Documents in the directory."""
+
         # Parse the directory and create documents and subdirectories
         self._parse()
 
     def _parse(self):
+        """Parse the directory and create documents and subdirectories."""
+
         logger.debug(f"Parsing directory {self.path}")
 
         self.directories.clear()
         self.documents.clear()
 
         for file in os.listdir(self.path):
-            if file.startswith("."): # or file.startswith("_"):
+
+            # We ignore hidden files and directories
+            if file.startswith("."):  # or file.startswith("_"):
                 continue
 
             file_path = os.path.join(self.path, file)
 
             if os.path.isdir(file_path):
-                # Check, if the dir has a MDP_IGNORE file
+                # Check, if the dir has a MDP_IGNORE file and should be ignored
                 if os.path.isfile(os.path.join(file_path, "MDP_IGNORE")):
                     logger.debug(f"Ignoring {file_path} because of MDP_IGNORE file")
                     continue
@@ -56,9 +78,8 @@ class Directory:
                     self.readme = doc
 
 
-    
+T = TypeVar("T", bound=MdpEnvironment)
 
-T = TypeVar('T', bound=MdpEnvironment)
 
 class Workspace:
     """
@@ -66,16 +87,34 @@ class Workspace:
     """
 
     def __init__(self, root: str):
+        """Initialize a new workspace.
+
+        Parameters
+        ----------
+        root : str
+            Root path of the workspace.
+        """
+
         self.root_path = root
+        """The root path of the workspace."""
 
         self.environments: dict[str, MdpEnvironment] = dict()
+        """
+        The environments of the workspace.
+        You can retreive an environment by calling `get_environment(env_name, YourMdpEnvironmentClass)`.
+        """
 
         self.directory_map: dict[str, Directory] = dict()
+        """Map of all directories and their paths as keys."""
+
         self.document_map: dict[str, Document] = dict()
+        """Map of all documents and their paths as keys."""
 
         self.generated_documents: list[GeneratedDocument] = list()
+        """List of all generated documents in the workspace."""
 
         self.root_dir = Directory(root, self)
+        """The root directory object of the workspace."""
 
         if logging.DEBUG >= logging.root.level:
             for doc in self.generated_documents:
@@ -83,15 +122,27 @@ class Workspace:
                 if len(doc.args) > 0:
                     logger.debug(f"\tArgs: {doc.args}")
 
-
     def get_environment(self, name: str, env_class: Type[T] = MdpEnvironment) -> T:
+        """Get an environment by name. If the environment does not exist, it will be created.
+
+        Parameters
+        ----------
+        name : str
+            The name of the environment.
+        env_class : Type[T], optional
+            The class of the environment, so that your return type fits your desired class, by default MdpEnvironment
+
+        Returns
+        -------
+        T
+            The environment.
+        """
         if name not in self.environments:
             self.environments[name] = env_class(self, name)
         return self.environments[name]
 
-
     def process(self):
+        """Process all documents in the workspace."""
+
         for doc in self.generated_documents:
             doc.process()
-        
-

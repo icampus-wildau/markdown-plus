@@ -42,6 +42,23 @@ class MessageType:
 
             splittedLines = []
 
+            # Skip Copyright / Licence block
+            init_comment_lines = []
+            for l in lines:
+                if l.startswith("#"):
+                    init_comment_lines.append(l)
+                else:
+                    break
+
+            if len(init_comment_lines) > 0:
+                s = "\n".join(init_comment_lines).lower()
+                if "license" in s or "copyright" in s:
+                    lines = lines[len(init_comment_lines) :]
+
+            # Skip the first lines if they are empty
+            while len(lines) > 0 and lines[0] == "":
+                lines.pop(0)
+
             for l in lines:
                 if l.startswith("#"):
                     splittedLines.append(l)
@@ -55,7 +72,7 @@ class MessageType:
 
             self.content = "\n".join(splittedLines)
 
-    def get_wiki_entry(self, header_level, replace_root: str = ""):
+    def get_wiki_entry(self, header_level: int, replace_root: str = ""):
         self.wikiEntry = ""
         self.wikiEntry += header_level * "#"
 
@@ -172,7 +189,7 @@ class Service(Topic):
         self.comment = comment
 
 
-class Parameter():
+class Parameter:
     def __init__(self, name: str, value: str, comment: str = ""):
         self.name = name
         self.value = value
@@ -450,12 +467,18 @@ class Package:
             # TODO: Parse CMakeList to get the actually generated Messages
             message_path = os.path.join(self.path, "msg")
             service_path = os.path.join(self.path, "srv")
-            message_files = [f for f in listdir(message_path) if isfile(join(message_path, f))] if os.path.exists(
-                message_path) else []
+            message_files = (
+                [f for f in listdir(message_path) if isfile(join(message_path, f))]
+                if os.path.exists(message_path)
+                else []
+            )
             message_files = [f for f in message_files if f.endswith(".msg")]
 
-            service_files = [f for f in listdir(service_path) if isfile(join(service_path, f))] if os.path.exists(
-                service_path) else []
+            service_files = (
+                [f for f in listdir(service_path) if isfile(join(service_path, f))]
+                if os.path.exists(service_path)
+                else []
+            )
             service_files = [f for f in service_files if f.endswith(".srv")]
 
             message_files.sort()

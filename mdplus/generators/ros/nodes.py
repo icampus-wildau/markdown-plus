@@ -1,28 +1,19 @@
 from __future__ import annotations
-import os
+
 import logging
-from typing import Dict, List
-
-import re
-
-from mdplus.core.environments.ros2 import Ros2Environment
-from mdplus.util.file_utils import join_relative_path
-
-from mdplus.core.generator import MdpGenerator
+from typing import TYPE_CHECKING, List
 
 from markdownTable import markdownTable
 
-from mdplus.util.hooks import Hooks
-from mdplus.util.parser.ros2_parser import Package, MessageType, ServiceType, Workspace, Topic, PackageType, Node
-from mdplus.util.markdown import get_anchor_from_header, get_link, adapt_header_level
 import mdplus.util.file_utils as file_utils
+from mdplus.core.environments.ros2 import Ros2Environment
+from mdplus.core.generator import MdpGenerator
+from mdplus.util.markdown import adapt_header_level, get_anchor_from_header, get_link
+from mdplus.util.parser.ros2_parser import Node, Package, PackageType
 
-from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from mdplus.core.documents.document import Document
     from mdplus.core.documents.block import MdpBlock
-
-import pandas as pd
 
 from mdplus.generators.flags import Flags
 
@@ -34,7 +25,7 @@ class RosNodesMdpModule(MdpGenerator):
         super().__init__(document, mdpBlock)
 
         self.arg_header = self.get_arg("header", "# ROS Nodes")
-        
+
         self.arg_only_commented_publishers = self.get_arg("only_commented_publishers", True)
         self.arg_only_commented_subscriptions = self.get_arg("only_commented_subscriptions", True)
         self.arg_only_commented_services = self.get_arg("only_commented_services", True)
@@ -90,7 +81,6 @@ class RosNodesMdpModule(MdpGenerator):
             content.append("This package has no ROS nodes.")
 
         return "\n\n".join(content)
-
 
     def get_node_section(self, node: Node) -> str:
         content = []
@@ -156,11 +146,7 @@ class RosNodesMdpModule(MdpGenerator):
                 # f'{topic["Kind"]} of type {topic["Type"]}'
             ]
             if comment is not None and len(comment) > 0:
-                parts.extend([
-                    f"```",
-                    f"{comment}",
-                    f"```"
-                ])
+                parts.extend([f"```", f"{comment}", f"```"])
             part = "\n".join(parts)
             content.append(part)
 
@@ -186,8 +172,9 @@ class RosNodesMdpModule(MdpGenerator):
 
         if len(topics) > 0:
             topics.sort(key=lambda x: x["Topic"])
-            table = markdownTable(topics).setParams(row_sep="markdown", quote=False,
-                                                    padding_weight='right').getMarkdown()
+            table = (
+                markdownTable(topics).setParams(row_sep="markdown", quote=False, padding_weight="right").getMarkdown()
+            )
             content.insert(2, "**Publisher, Subscriber and Services of this node**")
             content.insert(3, table)
 
@@ -209,10 +196,12 @@ class RosNodesMdpModule(MdpGenerator):
                 )
             if len(parameters) > 0:
                 parameters.sort(key=lambda x: x["Name"])
-                table = markdownTable(parameters).setParams(row_sep="markdown", quote=False,
-                                                            padding_weight='right').getMarkdown()
+                table = (
+                    markdownTable(parameters)
+                    .setParams(row_sep="markdown", quote=False, padding_weight="right")
+                    .getMarkdown()
+                )
                 content.insert(2, "**Parameters of this node**")
                 content.insert(3, table)
 
         return "\n\n".join(content)
-

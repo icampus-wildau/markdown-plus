@@ -15,37 +15,58 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-
 class Document:
     """
     Base class for documents in a workspace.
     """
 
-    def __init__(self, 
-                 file_path: str, 
-                 workspace: Workspace,
-                 comment_definition: CommentDefinition = CommentDefinition.get_python_style(),
-                ):
+    def __init__(
+        self,
+        file_path: str,
+        workspace: Workspace,
+        comment_definition: CommentDefinition = CommentDefinition.get_python_style(),
+    ):
+        """Initialize a new document in the workspace.
+
+        Parameters
+        ----------
+        file_path : str
+            The absolute path of the document.
+        workspace : Workspace
+            The parent workspace.
+        comment_definition : CommentDefinition, optional
+            The comment definition of the document, by default CommentDefinition.get_python_style()
+        """
+
         self.full_path = os.path.abspath(file_path)
+        """Absolute path of the document."""
+
         self.dir_path = os.path.dirname(file_path)
+        """Directory path of the document."""
+
         self.file_name = os.path.basename(file_path)
+        """File name of the document."""
 
         self.comment_definition = comment_definition
-
+        """Comment definition of the document."""
 
         self.workspace = workspace
+        """Parent workspace of the document."""
+
+        # Store the document in the workspace
         workspace.document_map[file_path] = self
 
+        # Check if the document is a readme
         self.is_readme = self.file_name.lower() in ["readme.md", "readme"]
+        """True if the document is a readme file."""
 
         # logger.debug(f"Creating document {self.full_path} {self.file_name} {self.is_readme}")
 
         self.mdp_pattern = MdpBlock.get_pattern(comment_definition)
-        
+        """Pattern to find MDP blocks in the document."""
+
         self._args: dict[str, any] = None
         """MDP args of the document."""
-
-        # TODO: Parse meta info from the document
 
     @property
     def args(self) -> dict[str, any]:
@@ -53,12 +74,12 @@ class Document:
             self._args = self.parse_args()
         return self._args
 
-
     def parse_args(self):
+        """Parse the MDP arguments of the document."""
 
         # Read the first lines that are either empty or multiline comments
         relevant_lines: list[str] = []
-        
+
         with open(self.full_path, "r", encoding="utf-8") as f:
             started = False
             for line in f:
@@ -73,7 +94,7 @@ class Document:
                 if any([line.strip().startswith(start) for start in self.comment_definition.multi_line_start]):
                     started = True
                     relevant_lines.append(line.strip())
-                    
+
                     if any([line.strip().endswith(end) for end in self.comment_definition.multi_line_end]):
                         break
 
@@ -88,48 +109,37 @@ class Document:
                             break
 
         block = "\n".join(relevant_lines)
-        # logger.debug(f"Found block in {self.full_path}: {block}")
         if (match := self.mdp_pattern.search(block)) is not None:
             mdp_block = MdpBlock(match)
             mdp_block.arguments_str
-            # logger.debug(f"Found MDP block in {self.full_path}: {mdp_block.command} {mdp_block.arguments_str} {mdp_block.arguments}")
             return mdp_block.arguments
 
         return {}
 
     def from_file(file_path: str, workspace: Workspace) -> Document:
+        """Create a new document from a file.
+        This method tries to automatically detect the file type and returns the correct document type.
+        """
         ending = os.path.splitext(file_path)[1]
         if ending == ".md":
             return GeneratedDocument(file_path, workspace, CommentDefinition.get_markdown_style())
-        
+
         if ending == ".py":
             return Document(file_path, workspace, CommentDefinition.get_python_style())
-        
+
         return Document(file_path, workspace, CommentDefinition.get_cpp_style())
 
 
-
-
 class GeneratedDocument(Document):
-    def __init__(self, file_path: str, workspace: Workspace, comment_definition: CommentDefinition = CommentDefinition.get_python_style()):
+    def __init__(
+        self,
+        file_path: str,
+        workspace: Workspace,
+        comment_definition: CommentDefinition = CommentDefinition.get_python_style(),
+    ):
         super().__init__(file_path, workspace, comment_definition)
 
         self.origin_text = None
-
-        return
-        # text = ""
-        # logger.info(f"Parsing {self.full_path}")
-        # with open(file_path, "r", encoding="utf-8") as f:
-        #     text = f.read()
-
-        # self.context = context if context is not None else dict()
-        # if "root" not in self.context:
-        #     self.context["root"] = os.path.dirname(file_path)
-        # self.context["file_path"] = file_path
-        # self.context["file_dir"] = self.dir_path
-
-        # self.origin_text = text
-        # self.modules = MdpGenerator.get_all_generators(text, self.context)
 
     def process(self):
         logger.info(f"Processing document: {self.full_path}")
@@ -137,12 +147,6 @@ class GeneratedDocument(Document):
         text = ""
         with open(self.full_path, "r", encoding="utf-8") as f:
             text = f.read()
-
-        # self.context = context if context is not None else dict()
-        # if "root" not in self.context:
-        #     self.context["root"] = os.path.dirname(file_path)
-        # self.context["file_path"] = file_path
-        # self.context["file_dir"] = self.dir_path
 
         self.origin_text = text
         self.modules = MdpGenerator.get_all_generators(text, self)
@@ -168,46 +172,3 @@ class GeneratedDocument(Document):
         content = self.get_generated_content()
         with open(file_path, "w", encoding="utf-8") as f:
             f.write(content)
-
-
-
-# class Document:
-#     def __init__(self, file_path: str, context: dict[str, any] = None):
-#         self.file_path = os.path.abspath(file_path)
-#         self.file_dir = os.path.dirname(file_path)
-        
-#         text = ""
-#         logger.info(f"Parsing {self.file_path}")
-#         with open(file_path, "r", encoding="utf-8") as f:
-#             text = f.read()
-
-#         self.context = context if context is not None else dict()
-#         if "root" not in self.context:
-#             self.context["root"] = os.path.dirname(file_path)
-#         self.context["file_path"] = file_path
-#         self.context["file_dir"] = self.file_dir
-
-
-#         # TODO: Parse meta info from the document
-
-            
-#         self.origin_text = text
-#         self.modules = MdpGenerator.get_all_modules(text, self.context)
-
-#     def get_generated_content(self):
-#         s = ""
-#         for module in self.modules:
-#             try:
-#                 s += module.get_entry()
-#             except Exception as e:
-#                 logger.error(f"Error in module {module.command}: {e}")
-#                 s += module.origin_text
-
-#         return s
-
-#     def write(self, file_path: str = None):
-#         if file_path is None:
-#             file_path = self.file_path
-
-#         with open(file_path, "w", encoding="utf-8") as f:
-#             f.write(self.get_generated_content())

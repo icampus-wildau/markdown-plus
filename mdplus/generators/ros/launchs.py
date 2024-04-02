@@ -1,21 +1,20 @@
 from __future__ import annotations
+
 import logging
-from typing import Dict
-
-
-from mdplus.core.environments.ros2 import Ros2Environment
-from mdplus.core.generator import MdpGenerator
+from typing import TYPE_CHECKING
 
 from markdownTable import markdownTable
 
-from mdplus.util.parser.ros2_parser import Package, PackageType
-from mdplus.util.markdown import get_link, adapt_string_for_table
 import mdplus.util.file_utils as file_utils
+from mdplus.core.environments.ros2 import Ros2Environment
+from mdplus.core.generator import MdpGenerator
+from mdplus.util.markdown import adapt_string_for_table, get_link
+from mdplus.util.parser.ros2_parser import Package, PackageType
+from overrides import overrides
 
-from typing import TYPE_CHECKING
 if TYPE_CHECKING:
-    from mdplus.core.documents.document import Document
     from mdplus.core.documents.block import MdpBlock
+    from mdplus.core.documents.document import Document
 
 logger = logging.getLogger(__name__)
 
@@ -25,7 +24,8 @@ class RosLaunchMdpModule(MdpGenerator):
         super().__init__(document, mdpBlock)
 
         self.arg_header = self.get_arg("header", "# ROS Launch Scripts")
-        
+
+    @overrides
     def get_content(self) -> str:
         """Creates a table of launch scripts found in the ROS-packages"""
 
@@ -49,7 +49,10 @@ class RosLaunchMdpModule(MdpGenerator):
                             {
                                 "Name": script.name,
                                 "Info": adapt_string_for_table(script.info),
-                                "Script": get_link(script.name, file_utils.get_relative_path(script.launch_file_path, self.document.dir_path)),
+                                "Script": get_link(
+                                    script.name,
+                                    file_utils.get_relative_path(script.launch_file_path, self.document.dir_path),
+                                ),
                             }
                         )
 
