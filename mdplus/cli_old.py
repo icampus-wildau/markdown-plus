@@ -11,8 +11,6 @@ import importlib
 import importlib.util
 import importlib.resources
 
-from numpy import info
-
 # from mdplus.core import Replacement
 
 from mdplus.logger import Logger
