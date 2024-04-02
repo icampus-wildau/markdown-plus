@@ -191,12 +191,14 @@ class MdpGenerator(ABC):
             # Get the mdp definition out of the regex match
             # and extract the command
             mdp_block = MdpBlock(match)
-            command = mdp_block.command
+            command = mdp_block.command            
 
             if command.upper() in MdpGenerator.IGNORED_COMMANDS:
                 module_cls = None
             else:
                 module_cls = ModuleImporter.get_module(command)
+                if ("IGNORE" in mdp_block.arguments) and (mdp_block.arguments["IGNORE"]):
+                    module_cls = None
 
             if module_cls is not None:
                 # Add NoChangeModule for text before the command

@@ -222,4 +222,6 @@ def init(ctx, root_dir, **kwargs):
         ctx.invoke(parse, root_dir=abs_path, **kwargs)
         # parse(abs_path)
 
+    logger.info("Initialization completed! :)")
+
     return

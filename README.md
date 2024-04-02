@@ -1,269 +1,116 @@
+<!-- MD+:META
+path = "README.md"
+title = "Default README structure for GitHub projects."
+-->
+
 # Markdown Plus
 
-Markdown / README Generator with advanced features like including files, generate tables etc.
+**Markdown / README Generator with advanced features like including files, generate content tables etc.**
 
-# Table of Contents
+Markdowm Plus adds a syntax to markdown files that allows to generate content in place.
+Use this tool to avoid unnecessary work writing your README files by generating the generatable stuff! 
 
-[[_TOC_]]
+# Getting Started 
 
-# Installation
-
-## From Git repository
-
-```bash
-git clone https://icampusnet.th-wildau.de/ros-e/software/infrastructure/markdown-plus
-cd markdown-plus
-
-# Install the package
-pip install .
-# or editable in development mode
-pip install -e .
-```
-
-
-# How to use
-
-## Initialize a project
+Install mdplus with pip:
 
 ```bash
-cd ~/your/project/directory
-mdplus init . # Creates the _README.md and some other files from which the README.md is generated. 
+# from PyPi
+pip install mdplus
+
+# ... or from GitHub 
+pip install git+https://github.com/icampus-wildau/markdown-plus.git
 ```
 
-## Parsing
+After the installation is completed, you can use *MD+ generators* in your markdown files.
 
-The main feature of MDPlus is to parse the `_README.md` file of a directory and generate the corresponding `README.md` file by process the MDPlus Features.
-
-
+To initialize a project with a mdplus template:
 ```bash
-cd ~/your/project/directory
-# Parse the ~/your/project/directory/_README.md file and generate a ~/your/project/directory/README.md file
-mdplus parse .
+cd ~/your/project/
+mdplus init 
 ```
 
-# Features in Markdown Plus
+In your `README.md` and other *.md* files, use various generators:
+```markdown
+# Your project
 
-MDPlus commands always have a first unnamed argument that specifies the root path for the command (often just `"./"`) or the path to a file.
+Example of the content generator:
+<!-- MD+:generate.content 
+IGNORE = True  # Just to avoid generation of this block in this getting started README
+-->
 
-Furthermore, there can be named arguments after that. E.g.:
-* `#MD+:snippet.installation("./", header="# Installation instruction\n\n")`
-
-## Snippets
-
-### `#MD+:snippet.installation("./")` - installation instructions
-
-Adds installation instructions for:
-* Installation from git
-* Installation as Pakk package
-
-**Arguments:**
-* `header`-argument: set the header text of the snippet, defaults to `"# Installation\n\n"`
-
-**Usage examples:**
-* `#MD+:snippet.installation("./")`
-* `#MD+:snippet.installation("./", header="# Installation instruction\n\n")`
-
-### `#MD+:snippet.content("./")` - Content table of the repo
-
-Adds an overview table of the content of the repo in the following way:
-* Each directory in the repo gets an entry in the table, containing:
-  * the directory name with a link to the directory
-  * a short content description of the directory
-* The short content description is generated from:
-  * If a README.md is present in the directory, the **first non-header** line is taken as description.
-  * If no README.md is present, the directory name is taken as description. 
-* If you want to exclude a directory from the table, add an empty `MDP_IGNORE` file to the directory.  
-
-**Arguments:**
-* `header`-argument: set the header text of the snippet, defaults to `"# Content\n\n"`
-
-**Usage examples:**
-* `#MD+:snippet.content("./")`
-* `#MD+:snippet.content("./", header="# Content table\n\n")`
-
-**Converts to (example):**
-
-| Dir                                          | Content                                                        |
-| -------------------------------------------- | -------------------------------------------------------------- |
-| [`docs`](docs)                               | Documentation                                                  |
-| [`message_bridge_msgs`](message_bridge_msgs) | Package containing all message bridge msg and srv definitions. |
-| [`message_bridge`](message_bridge)           | Python package containing all message bridge nodes.            |
-
-
-## Including of files
-
-### `#MD+:include.md("./path/to/file.md")` - Including of another Markdown file 
-
-This snippet just includes another Markdown file into the generated Markdown file.
-This allows you to split up your documentation into separate files.
-
-**Options for the included file**
-* `<!-- #MD+flag:IGNORE_INCLUDE -->`: This flag can be added somewhere to the 
-  included markdown file to ignore everything after this flag.
-
-**Usage examples:**
-* `#MD+:include.md("./path/to/file.md")`
-
-
-### `#MD+:include.example("./path/to/example/file.py")` - Including of an example
-
-This snippet includes an example from the given file into the generated Markdown file.
-The command can be used inline, in which case the header for the included file is not taken from the source file but instead from the text before the command.
-
-**Currently supported file types**:
-* Python `.py` files
-
-**Behavior of the included example file**:
-* The code of the example file is structured by multi-line-comments (`""" ... """`). The content of the comments is taken as text description for the following code, which is included as code block.
-* Inside the code block you can use `#` to structure the comments by header levels. They get automatically converted to the correct header level in the generated Markdown file.
-* The first multi-line-comment, more precisely the first line of it, is taken as header for the included example.
-
-**Options for the included example file**
-* `#MD+flag:IGNORE:LINE`: Add this flag at the end of the line to ignore the line.
-* `#MD+flag:IGNORE:START` and `#MD+flag:IGNORE:END`: Everything between those two flags is ignored.
-* `#MD+flag:IGNORE:START` (without END flag): Everything after this flag is ignored.
-
-**Usage examples:**
-* `#MD+:include.example("./path/to/example/file.py")`
-* `# Take this header for the included example #MD+:include.example("./path/to/example/file.py")`
-
-
-### `#MD+:include.examples("./path/to/example/dir/")` - Including of an example directory
-
-This snippet includes examples from the given sub directory into the generated Markdown file.
-
-See [#MD+:include.example](#mdincludeexamplepathtoexamplefilepy-including-of-an-example) for further information about the single example files.
-
-**Configuration of the included example files**
-
-You can configure the behavior of the included example files by adding a `mdplus.json` file to the sub directory.
-In this file you can define the following:
-
-```json
-{
-    ...
-    "examples": {
-        "order": [
-            "first_file_to_be_included.py",
-            "second_file_to_be_included.py",
-            ...
-        ],
-        // if true, all files not listed in the order list are ignored
-        "ignoreUnlisted": false, 
-        "ignore": [
-            "file_to_be_ignored.py",
-            ...
-        ]
-    },
-    ...
-}
+...
 ```
 
-**Usage examples:**
-* `#MD+:include.examples("./path/to/example/dir/")`
-
-## ROS Commands
-
-MDPlus commands starting with `ros.` are for ROS-packages.
-
-### `#MD+:ros.complete("./")` - Complete ROS section
-
-This command combines the following ROS commands:
-* Overview of launch scripts
-* Overview of ROS nodes
-* Overview of message and service types
-
-See the following topics for more information.
-
-**Arguments:**
-* `header`-argument: set the header text of the snippet, defaults to `"# ROS Information\n\n"`
-
-### `#MD+:ros.launchs("./")` - Overview of launch scripts
-
-Creates a table with all launch scripts in the ROS package, including:
-* the name of the script
-* the path to the related python script
-* short description, what the script does
-  * the information is taken from the first line in the docstring unter the `def generate_launch_description():` line in your launch script.
-
-Example of a launch script:
-```python
-def generate_launch_description():
-    """This line will show up in the launch script table"""
-
-    ...
-
+Then, use the `mdplus` command to generate the content:
+```bash
+cd ~/your/project/
+mdplus p
 ```
 
-**Converts to (example):**
+This will generate the content in place:
+```markdown
+# Your project
 
-```
-| Name    | Info      | Script                                  |
-| ------- | --------- | --------------------------------------- |
-| launch1 | Launch 2. | [node1.py](./path/to/launch1.launch.py) |
-| launch2 | Launch 1. | [node2.py](./path/to/launch2.launch.py) |
+Example of the content generator:
+<!-- MD+:generate.content 
+header = '# Contents of this Repository'
+level = 1
+IGNORE = True  # Just to avoid generation of this block in this getting started README
+-->
+# Contents of this Repository
+
+|      Dir     |            Content            |
+|--------------|-------------------------------|
+|[`docs`](docs)|The documentation for package. |
+|[`foo`](foo)  |Some directory of your project.|
+<!-- MD+FIN:generate.content -->
 ```
 
 
-### `#MD+:ros.nodes("./")` - Overview of ROS nodes
+See the [Documentation](#documentation) section for more information.
 
-Creates a table with all nodes in the ROS package, including:
-* the name of the node
-* the path to the related python script
-* short description, what the node is for
-  * the information is taken from the first line in the docstring unter the `class MyNode(Node):` ROS-node class definition in your node script.
+# Features & Compatibility
 
-Example of a ROS node:
-```python
-import rclpy
-from rclpy.node import Node
+Features of the project:
+- **parse** markdown files and generate content in place
+- initialize projects with **templates**
 
-class MyNode(Node):
-    """This line will show up in the ROS node table"""
+Future work:
+- more generators
 
-    ...
-```
+<!-- MD+:generate.content 
+header = '# Contents of this Repository'
+level = 1
+-->
+# Contents of this Repository
 
-**Converts to (example):**
+|        Dir       |            Content           |
+|------------------|------------------------------|
+|  [`docs`](docs)  |The documentation for package.|
+|[`mdplus`](mdplus)|            mdplus            |
+<!-- MD+FIN:generate.content -->
 
-```
-| Name  | Info    | Script                         |
-| ----- | ------- | ------------------------------ |
-| node1 | Node 2. | [node1.py](./path/to/node1.py) |
-| node2 | Node 1. | [node2.py](./path/to/node2.py) |
-```
+# Documentation
 
-### `#MD+:ros.msgs("./")` - Overview of the message and service types
+A more detailed documentation can be found at [`docs/README.md`](docs/README.md).
 
-Creates a subsection describing all message types in the ROS package, including:
-* a table as overview
-* each message / service type with the message type definition
+# Questions/Issues
 
-The overview table includes the following information:
-* the name of the message / service type
-* whether the type is a message or a service type
-* the root package of the type
+If you encounter any problems or have any questions, please open an issue on [the GitHub repository](https://github.com/icampus-wildau/markdown-plus/issues).
 
-After the table, the message type definitions are taken from the source files and added to the section.
+# Contributing
 
-**Converts to (example):**
+Contributions to extend the functionality or to solve existing problems are welcome! Requirements for pull requests are:
+- All code is tested
+- Naming is consistent with project naming
+- Commits are squashed and contain a clear commit message describing what functionality is added.
 
-```md
-## ROS Messages and services
+<!-- # Related Projects
 
-|         Name        |  Type |      Package      |
-|---------------------|-------|-------------------|
-|[`JsonMsg`](#jsonmsg)|Message|message_bridge_msgs|
-|[`JsonSrv`](#jsonsrv)|Service|message_bridge_msgs|
+Related projects:
+-  -->
 
-### Message definitions of message_bridge_msgs
+# License
 
-#### [`JsonMsg`](./message_bridge_msgs/msg/JsonMsg.msg)
-
-```python
-string topic
-string type
-string data
-´´´
-
-```
+This project is licensed under the Apache License 2.0. For details, please see the [LICENSE](LICENCE) file. By contributing to this project, you agree to abide by the terms and conditions of the Apache License 2.0.
