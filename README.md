@@ -45,7 +45,7 @@ IGNORE = True  # Just to avoid generation of this block in this getting started 
 Then, use the `mdplus` command to generate the content:
 ```bash
 cd ~/your/project/
-mdplus p
+mdplus parse .
 ```
 
 This will generate the content in place:
@@ -68,7 +68,7 @@ IGNORE = True  # Just to avoid generation of this block in this getting started 
 ```
 
 
-See the [Documentation](#documentation) section for more information.
+See the [Documentation](docs/README.md) section for more information.
 
 # Features & Compatibility
 
@@ -82,6 +82,8 @@ Future work:
 <!-- MD+:generate.content 
 header = '# Contents of this Repository'
 level = 1
+dirs = True
+md_files = False
 -->
 # Contents of this Repository
 

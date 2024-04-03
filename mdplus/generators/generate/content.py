@@ -23,13 +23,16 @@ class ContentGenerator(MdpGenerator):
         super().__init__(document, mdpBlock)
 
         self.arg_header = self.get_arg("header", "# Contents of this Repository")
+        self.arg_dirs = self.get_arg("dirs", True)
+        self.arg_md_files = self.get_arg("md_files", False)
 
     def get_content(self) -> str:
         
         content = list()
         content.append(self.arg_header)
 
-        dir_path = self.workspace.root_path
+        # dir_path = self.workspace.root_path
+        dir_path = self.document.dir_path
 
         logger.info(f"Creating content of {dir_path}")
 
@@ -49,7 +52,7 @@ class ContentGenerator(MdpGenerator):
 
                 # Check if file is a directory
                 dir = os.path.join(dir_path, file)
-                if os.path.isdir(dir):
+                if os.path.isdir(dir) and self.arg_dirs:
                     info = file
 
                     # Check if directory contains a MDP_IGNORE file
@@ -94,6 +97,25 @@ class ContentGenerator(MdpGenerator):
 
                     file_entry = f"[`{file}`]({file})"
                     entries[file_entry] = info
+                elif self.arg_md_files and file.endswith(".md"):
+
+                    path = os.path.join(dir_path, file)
+                    
+                    # Skip the own file
+                    if path == self.document.full_path:
+                        continue
+
+                    doc = self.workspace.document_map.get(path, None)
+
+                    basename = os.path.basename(file)
+                    if doc is not None:
+                        info = doc.get_title() or doc.file_name
+                    else:
+                        info = basename
+                    
+                    file_entry = f"[`{basename}`]({file})"
+                    entries[file_entry] = info
+
 
             # Convert entries to a dataframe
             df = pd.DataFrame(entries.items(), columns=["Dir", "Content"])

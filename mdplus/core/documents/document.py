@@ -150,6 +150,12 @@ class GeneratedDocument(Document):
         self.origin_text = None
 
     def process(self):
+
+        # If skip_generating is set, we do not generate the document
+        if self.args.get("skip_generating", False):
+            logger.info(f"Skipping document: {self.full_path}")
+            return
+
         logger.info(f"Processing document: {self.full_path}")
 
         text = ""
