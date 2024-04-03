@@ -5,7 +5,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "mdplus"
-version = "1.0.0"
+version = "0.1.0"
 authors = [
   { name="Valentin Schröter", email="vasc9380@th-wildau.de" },
 ]
