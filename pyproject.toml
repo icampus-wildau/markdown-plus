@@ -29,6 +29,9 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 
+[tool.hatch.build.targets.wheel]
+packages = ["mdplus"]
+
 [project.urls]
 Homepage = "https://github.com/iCampus-Wildau/markdown-plus"
 Issues = "https://github.com/iCampus-Wildau/markdown-plus/issues"
