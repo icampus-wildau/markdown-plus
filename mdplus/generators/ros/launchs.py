@@ -3,7 +3,7 @@ from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING
 
-from markdownTable import markdownTable
+from markdownTable import markdown_table
 
 import mdplus.util.file_utils as file_utils
 from mdplus.core.environments.ros2 import Ros2Environment
@@ -59,7 +59,7 @@ class RosLaunchMdpModule(MdpGenerator):
         scripts.sort(key=lambda x: x["Name"])
 
         if len(scripts) > 0:
-            content.append(markdownTable(scripts).setParams(row_sep="markdown", quote=False).getMarkdown())
+            content.append(markdown_table(scripts).set_params(row_sep="markdown", quote=False, padding_weight="right").get_markdown())
         else:
             content.append("This package has no launch scripts")
 

@@ -3,7 +3,7 @@ from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING, Dict, List
 
-from markdownTable import markdownTable
+from markdownTable import markdown_table
 
 from mdplus.core.environments.ros2 import Ros2Environment
 from mdplus.util.markdown import get_anchor_from_header
@@ -89,4 +89,4 @@ class RosInterfacesMdpModule(MdpGenerator):
         msg_data.sort(key=lambda x: x["Name"])
         srv_data.sort(key=lambda x: x["Name"])
 
-        return markdownTable(msg_data + srv_data).setParams(row_sep="markdown", quote=False).getMarkdown()
+        return markdown_table(msg_data + srv_data).set_params(row_sep="markdown", quote=False, padding_weight="right").get_markdown()

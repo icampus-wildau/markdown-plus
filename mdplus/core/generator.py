@@ -143,6 +143,10 @@ class MdpGenerator(ABC):
         str
             The entry of the module.
         """
+        if not self.is_applicable():
+            logger.info("Module %s not applicable", self.command)
+            return self.origin_text
+
         logger.info("Generating entry for %s", self.command)
 
         # Adapt the header level
