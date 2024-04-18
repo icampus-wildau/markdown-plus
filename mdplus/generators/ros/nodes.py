@@ -3,7 +3,7 @@ from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING, List
 
-from markdownTable import markdownTable
+from markdownTable import markdown_table
 
 import mdplus.util.file_utils as file_utils
 from mdplus.core.environments.ros2 import Ros2Environment
@@ -52,7 +52,7 @@ class RosNodesMdpModule(MdpGenerator):
         if len(nodes) == 0:
             return ""
 
-        return markdownTable(nodes).setParams(row_sep="markdown", quote=False).getMarkdown()
+        return markdown_table(nodes).set_params(row_sep="markdown", quote=False, padding_weight="right").get_markdown()
 
     def get_content(self) -> str:
         """Creates a table of nodes found in the ROS-packages"""
@@ -173,7 +173,7 @@ class RosNodesMdpModule(MdpGenerator):
         if len(topics) > 0:
             topics.sort(key=lambda x: x["Topic"])
             table = (
-                markdownTable(topics).setParams(row_sep="markdown", quote=False, padding_weight="right").getMarkdown()
+                markdown_table(topics).set_params(row_sep="markdown", quote=False, padding_weight="right").get_markdown()
             )
             content.insert(2, "**Publisher, Subscriber and Services of this node**")
             content.insert(3, table)
@@ -197,9 +197,9 @@ class RosNodesMdpModule(MdpGenerator):
             if len(parameters) > 0:
                 parameters.sort(key=lambda x: x["Name"])
                 table = (
-                    markdownTable(parameters)
-                    .setParams(row_sep="markdown", quote=False, padding_weight="right")
-                    .getMarkdown()
+                    markdown_table(parameters)
+                    .set_params(row_sep="markdown", quote=False, padding_weight="right")
+                    .get_markdown()
                 )
                 content.insert(2, "**Parameters of this node**")
                 content.insert(3, table)
