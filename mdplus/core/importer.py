@@ -33,7 +33,10 @@ class ModuleImporter:
 
         if command not in ModuleImporter.modules:
             module_name = f"{GENERATORS_PREFIX}.{command}"
-            spec = importlib.util.find_spec(module_name)
+            try:
+                spec = importlib.util.find_spec(module_name)
+            except ModuleNotFoundError:
+                spec = None
             if spec is not None:
                 logger.debug("Importing generator %s", module_name)
                 ModuleImporter.modules[command] = importlib.import_module(module_name)
