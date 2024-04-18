@@ -144,7 +144,7 @@ class MdpGenerator(ABC):
             The entry of the module.
         """
         if not self.is_applicable():
-            logger.info("Module %s not applicable", self.command)
+            logger.warning("Module %s not applicable", self.command)
             return self.origin_text
 
         logger.info("Generating entry for %s", self.command)
@@ -211,7 +211,8 @@ class MdpGenerator(ABC):
 
                 # Add module defined by the command
                 module: MdpGenerator = module_cls(document, mdp_block)
-                module.origin_text = text[match.start() : match.end()]
+                tag_start = match.start()
+                tag_end = match.end()
                 modules.append(module)
 
                 # Find end tag for that module and continue search
@@ -221,7 +222,10 @@ class MdpGenerator(ABC):
                 if match is None:
                     logger.warning(f"End tag for {command} not found")
                 else:
+                    tag_end = match.end()
                     start = match.end()
+                module.origin_text = text[tag_start:tag_end]
+
             else:
                 modules.append(NoChangeModule(document, text[start : match.end()]))
                 start = match.end()

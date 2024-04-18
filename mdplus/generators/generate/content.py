@@ -29,7 +29,8 @@ class ContentGenerator(MdpGenerator):
     def get_content(self) -> str:
         
         content = list()
-        content.append(self.arg_header)
+        if len(self.arg_header) > 0:
+            content.append(self.arg_header)
 
         # dir_path = self.workspace.root_path
         dir_path = self.document.dir_path
@@ -118,7 +119,7 @@ class ContentGenerator(MdpGenerator):
 
 
             # Convert entries to a dataframe
-            df = pd.DataFrame(entries.items(), columns=["Dir", "Content"])
+            df = pd.DataFrame(entries.items(), columns=["Directory", "Content"])
 
             # Create a Markdown table out of the dataframe
             mkdict = df.to_dict(orient="records")
