@@ -4,7 +4,7 @@ import logging
 
 from mdplus.core.generator import MdpGenerator
 
-from markdownTable import markdownTable
+from markdownTable import markdown_table
 
 import pandas as pd
 
@@ -122,6 +122,6 @@ class ContentGenerator(MdpGenerator):
 
             # Create a Markdown table out of the dataframe
             mkdict = df.to_dict(orient="records")
-            content.append(markdownTable(mkdict).setParams(row_sep="markdown", quote=False).getMarkdown())
+            content.append(markdown_table(mkdict).set_params(row_sep="markdown", quote=False, padding_weight="right").get_markdown())
 
             return "\n\n".join(content)

@@ -149,10 +149,20 @@ class GeneratedDocument(Document):
 
         self.origin_text = None
 
+    @property
+    def skip_generating(self):
+        flags = ["skip_generating", "skip", "ignore"]
+
+        for flag in flags:
+            if flag in self.args:
+                return self.args[flag]
+
+        return False
+
     def process(self):
 
         # If skip_generating is set, we do not generate the document
-        if self.args.get("skip_generating", False):
+        if self.skip_generating:
             logger.info(f"Skipping document: {self.full_path}")
             return
 
