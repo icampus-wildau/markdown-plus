@@ -40,7 +40,7 @@ class ExampleIncluder(MdpGenerator):
 
     @staticmethod
     def remove_empty_lines(text: str):
-        return empty_lines.sub("\n\n", text)
+        return empty_lines.sub("\n\n", text.strip())
 
     @staticmethod
     def process_ignored(text: str):
@@ -72,11 +72,15 @@ class ExampleIncluder(MdpGenerator):
             first_comment_block = comment_block_pattern.search(input_text)
             if first_comment_block is not None:
                 text: str = first_comment_block.group(1)
-
                 # If we do not have an explicit header starting with markdowns header-# in the example
                 if not text.strip().startswith("# "):
                     header = self.arg_header or os.path.basename(file_path)
-                    output += f"# [{header}]({relative_link})\n"
+                    
+                    # output += f"# [{header}]({relative_link})\n"
+                    output += f"# {header}\n"
+                    output += f"See [{relative_link.lstrip('./')}](./" + relative_link + ").\n\n"
+
+
                 # If we have an explicit header in the example
                 else:
                     header_pattern = re.compile(r"# (.*?)\n\n")
@@ -84,7 +88,14 @@ class ExampleIncluder(MdpGenerator):
                     if m is not None:
                         header = self.arg_header or m.group(1)
                         start, end = m.span()
-                        text = text[:start] + f"# [{header}]({relative_link})\n" + text[end:]
+                        
+                        # text = text[:start] + f"# [{header}]({relative_link})\n" + text[end:]
+                        end = text[end:]
+                        text = text[:start] + f"# {header}\n" 
+                        text += f"See [{relative_link.lstrip('./')}](./" + relative_link + ").\n\n"
+                        text += end
+
+
 
                     input_text = (
                         input_text[: first_comment_block.start(1)] + text + input_text[first_comment_block.end(1) :]
