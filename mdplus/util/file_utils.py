@@ -40,10 +40,10 @@ def hasFiles(dirPath, files: List[str]):
 
     return existingCount == len(files)
 
-def linux_path(path):
+def linux_path(path) -> str:
     return os.path.normpath(path).replace("\\", "/")
 
-def get_relative_path(path, root):
+def get_relative_path(path, root) -> str:
     # Check if the path is a subdirectory of the root
     if path.startswith(root):
       return linux_path(os.path.join(".", path[len(root):]))
