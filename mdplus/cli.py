@@ -19,7 +19,13 @@ CONTEXT_SETTINGS = dict(help_option_names=["-h", "--help"], max_content_width=80
 
 def setup_logger(**kwargs):
     global logger_initialized
-    logger.setLevel(logging.DEBUG if kwargs.get("verbose") else logging.INFO)
+    if kwargs.get("quiet"):
+        logger.setLevel(logging.ERROR)
+    elif kwargs.get("verbose"):
+        logger.setLevel(logging.DEBUG)
+    else:
+        logger.setLevel(logging.INFO)
+
     if logger_initialized:
         return
     
@@ -52,6 +58,8 @@ def config():
 
 @execute.command(aliases=["p"])
 @click.option("--verbose", "-v", is_flag=True, help="Print more output.")
+@click.option("--quiet", "-q", is_flag=True, help="Print less output.")
+@click.option("--write-only-new-content", "-N", is_flag=True, help="Only write files with new content.")
 # @click.option("--recursive", "-r", is_flag=True, help="Parse all subdirectories.")
 # @click.option("--root", "-R", help="Root directory parsing the repo.")
 @click.argument(
@@ -78,7 +86,7 @@ def parse(root_dir, **kwargs):
     logger.debug(f"Starting parsing of {root_dir}")
     
     workspace = Workspace(root_dir)
-    workspace.process()
+    workspace.process(kwargs.get("write_only_new_content", False))
 
 
 @execute.command(aliases=["i"])

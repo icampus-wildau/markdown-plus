@@ -153,8 +153,14 @@ class Workspace:
             self.environments[name] = env_class(self, name)
         return self.environments[name]
 
-    def process(self):
-        """Process all documents in the workspace."""
+    def process(self, check_for_new_content: bool = False):
+        """Process all documents in the workspace.
 
+        Parameters
+        ----------
+        check_for_new_content : bool, optional
+            If True, the workspace will check for new content in the written documents before writing them, by default False.
+        """        
+        
         for doc in self.generated_documents:
-            doc.process()
+            doc.process(check_for_new_content)
