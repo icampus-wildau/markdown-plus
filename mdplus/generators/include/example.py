@@ -78,7 +78,7 @@ class ExampleIncluder(MdpGenerator):
                     
                     # output += f"# [{header}]({relative_link})\n"
                     output += f"# {header}\n"
-                    output += f"See [{relative_link.lstrip('./')}](./" + relative_link + ").\n\n"
+                    # output += f"See [{relative_link.lstrip('./')}](./" + relative_link + ").\n\n"
 
 
                 # If we have an explicit header in the example
@@ -126,5 +126,8 @@ class ExampleIncluder(MdpGenerator):
                     output += "```python\n"
                     output += new_part
                     output += "\n```\n\n"
+
+            output += f"Source of the above code: [{relative_link.lstrip('./')}](./" + relative_link + ").\n\n"
+
 
         return self.remove_empty_lines(output)

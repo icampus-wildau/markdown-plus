@@ -80,12 +80,16 @@ class MessageType:
         if replace_root != "":
             relative_path = file_utils.get_relative_path(relative_path, replace_root)
 
-        self.wikiEntry += f" [`{self.name}`]({relative_path})\n"
+        # self.wikiEntry += f" [`{self.name}`]({relative_path})\n"
+        self.wikiEntry += f" `{self.name}`\n"
         self.wikiEntry += "\n"
         self.wikiEntry += "```python\n"
         self.wikiEntry += self.content
         self.wikiEntry += "\n"
         self.wikiEntry += "```\n"
+        self.wikiEntry += "\n"
+        self.wikiEntry += f"Source: [{relative_path.lstrip('./')}]({relative_path})"
+
         return self.wikiEntry
 
     def __repr__(self) -> str:
