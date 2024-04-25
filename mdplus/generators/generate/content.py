@@ -63,6 +63,12 @@ class ContentGenerator(MdpGenerator):
                     if os.path.isfile(os.path.join(dir, "MDP_IGNORE")):
                         continue
 
+                    # Check if the directory is ignored by .gitignore
+                    cmd = f"git check-ignore {dir}"
+                    result = os.system(f"{cmd} > /dev/null 2>&1")
+                    if result == 0:
+                        continue
+
                     mdp_dir = self.workspace.directory_map.get(dir, None)
                     need_parse = True
 

@@ -83,7 +83,7 @@ class MdpGenerator(ABC):
         start = self.document.comment_definition.multi_line_start[0]
         end = self.document.comment_definition.multi_line_end[0]
         args_string = self.get_args_string()
-        s = f"{start} MD+:{self.command} "
+        s = f"{start} MD+:{self.command}"
         if args_string != "":
             s += "\n" + args_string
         s += f"{end}"
