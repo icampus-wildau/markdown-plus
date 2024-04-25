@@ -3,7 +3,7 @@ import os
 from typing import List
 
 
-class JsonLoadable():
+class JsonLoadable:
     def assign_from_json(self, json_dict: dict):
         # Iter all keys in the json dict
         for key in json_dict:

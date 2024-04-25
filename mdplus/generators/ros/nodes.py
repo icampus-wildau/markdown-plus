@@ -82,7 +82,7 @@ class RosNodesMdpModule(MdpGenerator):
 
         return "\n\n".join(content)
 
-    def get_node_section(self, node: Node) -> str:
+    def get_node_section(self, node: Node, comment_as_code_block=False) -> str:
         content = []
         topics = []
 
@@ -117,7 +117,6 @@ class RosNodesMdpModule(MdpGenerator):
                         "Comment": publisher.comment,
                     }
                 )
-
         for subscription in node.subscriptions:
             if not self.arg_only_commented_subscriptions or len(subscription.comment) > 0:
                 if Flags.IGNORE in subscription.comment:
@@ -146,7 +145,10 @@ class RosNodesMdpModule(MdpGenerator):
                 # f'{topic["Kind"]} of type {topic["Type"]}'
             ]
             if comment is not None and len(comment) > 0:
-                parts.extend([f"```", f"{comment}", f"```"])
+                if comment_as_code_block:
+                    parts.extend([f"```", f"{comment}", f"```"])
+                else:
+                    parts.extend([f"{comment}"])
             part = "\n".join(parts)
             content.append(part)
 
@@ -173,7 +175,9 @@ class RosNodesMdpModule(MdpGenerator):
         if len(topics) > 0:
             topics.sort(key=lambda x: x["Topic"])
             table = (
-                markdown_table(topics).set_params(row_sep="markdown", quote=False, padding_weight="right").get_markdown()
+                markdown_table(topics)
+                .set_params(row_sep="markdown", quote=False, padding_weight="right")
+                .get_markdown()
             )
             content.insert(2, "**Publisher, Subscriber and Services of this node**")
             content.insert(3, table)

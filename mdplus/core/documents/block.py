@@ -8,15 +8,16 @@ from mdplus.core.documents.definitions import CommentDefinition
 
 logger = logging.getLogger(__name__)
 
+
 class MdpBlock:
-    def __init__(self, match: re.Match):        
+    def __init__(self, match: re.Match):
         self.match = match
         self.command: str = match.group(2)
         self.arguments_str: str = match.group(3)
 
     @property
     def arguments(self) -> dict[str, str]:
-        return self.parse_arguments(self.arguments_str) 
+        return self.parse_arguments(self.arguments_str)
 
     @staticmethod
     def get_pattern(comment_definition: CommentDefinition):
@@ -34,16 +35,16 @@ class MdpBlock:
         # Group 3: Arguments
 
         return re.compile(pattern_str, re.MULTILINE | re.DOTALL)
-    
+
     @staticmethod
     def get_fin_pattern(command: str, comment_definition: CommentDefinition):
-        
+
         start = f"({'|'.join(re.escape(s) for s in comment_definition.multi_line_start)})"
         end = f"({'|'.join(re.escape(s) for s in comment_definition.multi_line_end)})"
         whitespace = r"[\s\n]*?"
         pattern_str = start + whitespace + r"MD\+FIN:" + command + whitespace + r"(" + end + r")"
         return re.compile(pattern_str, re.MULTILINE | re.DOTALL)
-   
+
     @staticmethod
     def parse_arguments(arguments: str) -> dict[str, str]:
         """Parse the arguments of the generator from the string representation.
@@ -58,7 +59,7 @@ class MdpBlock:
         dict[str, str]
             Dictionary containing the arguments.
         """
-        
+
         if arguments.strip() == "":
             return {}
 
@@ -71,7 +72,7 @@ class MdpBlock:
             lines = [line[intend:] for line in lines]
             arguments = "\n".join(lines)
         # print(arguments)
-            
+
         parsed_dict = {}
         parsed_ast = ast.parse(arguments)
 
@@ -89,8 +90,10 @@ class MdpBlock:
                             var_value = ast.literal_eval(var_value.value)
                         else:
                             try:
-                                var_value = eval(compile(ast.Expression(var_value), '', 'eval'), global_vars, parsed_dict)
-                            except Exception as _:   
+                                var_value = eval(
+                                    compile(ast.Expression(var_value), "", "eval"), global_vars, parsed_dict
+                                )
+                            except Exception as _:
                                 string_of_expression = ast.get_source_segment(arguments, node.value)
                                 logger.error("Error evaluating expression '%s'", string_of_expression)
                                 var_value = None

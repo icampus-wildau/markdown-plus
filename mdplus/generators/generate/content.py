@@ -13,12 +13,15 @@ logger = logging.getLogger(__name__)
 
 
 from typing import TYPE_CHECKING
+
 if TYPE_CHECKING:
     from mdplus.core.documents.document import Document
     from mdplus.core.documents.block import MdpBlock
 
+
 class ContentGenerator(MdpGenerator):
     """Creates a table of contents of the given directory"""
+
     def __init__(self, document: Document, mdpBlock: MdpBlock):
         super().__init__(document, mdpBlock)
 
@@ -27,7 +30,7 @@ class ContentGenerator(MdpGenerator):
         self.arg_md_files = self.get_arg("md_files", False)
 
     def get_content(self) -> str:
-        
+
         content = list()
         if len(self.arg_header) > 0:
             content.append(self.arg_header)
@@ -62,7 +65,7 @@ class ContentGenerator(MdpGenerator):
 
                     mdp_dir = self.workspace.directory_map.get(dir, None)
                     need_parse = True
-                    
+
                     # If there is a readme file in the directory, check for given args in that file
                     if mdp_dir is not None:
                         if mdp_dir.readme is not None:
@@ -101,7 +104,7 @@ class ContentGenerator(MdpGenerator):
                 elif self.arg_md_files and file.endswith(".md"):
 
                     path = os.path.join(dir_path, file)
-                    
+
                     # Skip the own file
                     if path == self.document.full_path:
                         continue
@@ -113,16 +116,19 @@ class ContentGenerator(MdpGenerator):
                         info = doc.get_title() or doc.file_name
                     else:
                         info = basename
-                    
+
                     file_entry = f"[`{basename}`]({file})"
                     entries[file_entry] = info
-
 
             # Convert entries to a dataframe
             df = pd.DataFrame(entries.items(), columns=["Directory", "Content"])
 
             # Create a Markdown table out of the dataframe
             mkdict = df.to_dict(orient="records")
-            content.append(markdown_table(mkdict).set_params(row_sep="markdown", quote=False, padding_weight="right").get_markdown())
+            content.append(
+                markdown_table(mkdict)
+                .set_params(row_sep="markdown", quote=False, padding_weight="right")
+                .get_markdown()
+            )
 
             return "\n\n".join(content)

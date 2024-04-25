@@ -42,7 +42,7 @@ class RosLaunchMdpModule(MdpGenerator):
 
         for package in packages:
             if package.package_type == PackageType.PYTHON:
-                
+
                 if len(package.launch_scripts) > 0:
                     for script in package.launch_scripts:
                         rel_path = file_utils.get_relative_path(script.launch_file_path, self.document.dir_path)
@@ -62,7 +62,11 @@ class RosLaunchMdpModule(MdpGenerator):
         scripts.sort(key=lambda x: x["Script"])
 
         if len(scripts) > 0:
-            content.append(markdown_table(scripts).set_params(row_sep="markdown", quote=False, padding_weight="right").get_markdown())
+            content.append(
+                markdown_table(scripts)
+                .set_params(row_sep="markdown", quote=False, padding_weight="right")
+                .get_markdown()
+            )
         else:
             content.append("This package has no launch scripts")
 

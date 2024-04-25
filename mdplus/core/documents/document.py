@@ -159,7 +159,7 @@ class GeneratedDocument(Document):
 
         return False
 
-    def process(self):
+    def process(self, check_for_new_content: bool = False):
 
         # If skip_generating is set, we do not generate the document
         if self.skip_generating:
@@ -175,7 +175,7 @@ class GeneratedDocument(Document):
         self.origin_text = text
         self.modules = MdpGenerator.get_all_generators(text, self)
 
-        self.write()
+        self.write(check_for_new_content=check_for_new_content)
 
     def get_generated_content(self):
         s = ""
@@ -189,10 +189,29 @@ class GeneratedDocument(Document):
 
         return s
 
-    def write(self, file_path: str = None):
+    def write(self, file_path: str = None, check_for_new_content: bool = False):
         if file_path is None:
             file_path = self.full_path
 
         content = self.get_generated_content()
+
+        if check_for_new_content:
+            content_lines = content.strip().split("\n")
+            with open(file_path, "r", encoding="utf-8") as f:
+                old_content_lines = f.read().strip().split("\n")
+                no_changes = True
+                for i, line in enumerate(content_lines):
+                    if line.strip() != old_content_lines[i].strip():
+                        no_changes = False
+                        break
+
+                if no_changes and len(content_lines) == len(old_content_lines):
+                    logger.debug(f"Skipping document: {file_path}")
+                    return
+
+        logger.info(f"Writing document: {file_path}")
+        if self.workspace.is_pre_commit_hook:
+            print("Fixing", file_path)
+
         with open(file_path, "w", encoding="utf-8") as f:
             f.write(content)

@@ -4,7 +4,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-class HookText():
+class HookText:
     def __init__(self, module: str, text: str):
         self.module = module
 
@@ -41,7 +41,7 @@ class HookText():
         return hook_texts
 
 
-class Hooks():
+class Hooks:
     def __init__(self, path: str):
         self.path = path
         self.file_content = ""
@@ -58,7 +58,9 @@ class Hooks():
     def __getitem__(self, item):
         return self.hooks[item]
 
-    def append_to_content(self, module_name: str | list[str], part_name: str | list[str], content: list[str], index=None):
+    def append_to_content(
+        self, module_name: str | list[str], part_name: str | list[str], content: list[str], index=None
+    ):
         if isinstance(module_name, str):
             module_name = [module_name]
 

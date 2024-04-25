@@ -89,4 +89,8 @@ class RosInterfacesMdpModule(MdpGenerator):
         msg_data.sort(key=lambda x: x["Name"])
         srv_data.sort(key=lambda x: x["Name"])
 
-        return markdown_table(msg_data + srv_data).set_params(row_sep="markdown", quote=False, padding_weight="right").get_markdown()
+        return (
+            markdown_table(msg_data + srv_data)
+            .set_params(row_sep="markdown", quote=False, padding_weight="right")
+            .get_markdown()
+        )

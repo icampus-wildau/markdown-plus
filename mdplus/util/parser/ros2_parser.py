@@ -37,7 +37,7 @@ class MessageType:
 
         with open(self.msg_file_path) as file:
             lines = file.readlines()
-            self.contentOriginal = "\n".join(lines)
+            self.content_original = "\n".join(lines)
             lines = [line.strip() for line in lines]
 
             splittedLines = []
@@ -72,7 +72,7 @@ class MessageType:
 
             self.content = "\n".join(splittedLines)
 
-    def get_wiki_entry(self, header_level: int, replace_root: str = ""):
+    def get_wiki_entry(self, header_level: int, replace_root: str = "", as_code_block=True):
         self.wikiEntry = ""
         self.wikiEntry += header_level * "#"
 
@@ -80,12 +80,18 @@ class MessageType:
         if replace_root != "":
             relative_path = file_utils.get_relative_path(relative_path, replace_root)
 
-        self.wikiEntry += f" [`{self.name}`]({relative_path})\n"
+        # self.wikiEntry += f" [`{self.name}`]({relative_path})\n"
+        self.wikiEntry += f" `{self.name}`\n"
         self.wikiEntry += "\n"
-        self.wikiEntry += "```python\n"
+        if as_code_block:
+            self.wikiEntry += "```python\n"
         self.wikiEntry += self.content
         self.wikiEntry += "\n"
-        self.wikiEntry += "```\n"
+        if as_code_block:
+            self.wikiEntry += "```\n"
+            self.wikiEntry += "\n"
+        self.wikiEntry += f"Source: [{relative_path.lstrip('./')}]({relative_path})"
+
         return self.wikiEntry
 
     def __repr__(self) -> str:
@@ -104,10 +110,27 @@ class ServiceType:
 
         with open(self.srv_file_path) as file:
             lines = file.readlines()
-            self.contentOriginal = "\n".join(lines)
+            self.content_original = "\n".join(lines)
             lines = [line.strip() for line in lines]
 
             splittedLines = []
+
+            # Skip Copyright / Licence block
+            init_comment_lines = []
+            for l in lines:
+                if l.startswith("#"):
+                    init_comment_lines.append(l)
+                else:
+                    break
+
+            if len(init_comment_lines) > 0:
+                s = "\n".join(init_comment_lines).lower()
+                if "license" in s or "copyright" in s:
+                    lines = lines[len(init_comment_lines) :]
+
+            # Skip the first lines if they are empty
+            while len(lines) > 0 and lines[0] == "":
+                lines.pop(0)
 
             for l in lines:
                 if l.startswith("#"):
@@ -122,7 +145,7 @@ class ServiceType:
 
             self.content = "\n".join(splittedLines)
 
-    def get_wiki_entry(self, header_level, replace_root: str = ""):
+    def get_wiki_entry(self, header_level: int, replace_root: str = "", as_code_block=True):
         self.wikiEntry = ""
         self.wikiEntry += header_level * "#"
 
@@ -130,12 +153,18 @@ class ServiceType:
         if replace_root != "":
             relative_path = file_utils.get_relative_path(relative_path, replace_root)
 
-        self.wikiEntry += f" [`{self.name}`]({relative_path})\n"
+        # self.wikiEntry += f" [`{self.name}`]({relative_path})\n"
+        self.wikiEntry += f" `{self.name}`\n"
         self.wikiEntry += "\n"
-        self.wikiEntry += "```python\n"
+        if as_code_block:
+            self.wikiEntry += "```python\n"
         self.wikiEntry += self.content
         self.wikiEntry += "\n"
-        self.wikiEntry += "```\n"
+        if as_code_block:
+            self.wikiEntry += "```\n"
+            self.wikiEntry += "\n"
+        self.wikiEntry += f"Source: [{relative_path.lstrip('./')}]({relative_path})"
+
         return self.wikiEntry
 
     def __repr__(self) -> str:
@@ -348,7 +377,6 @@ class Node:
         constants = PyParser.get_elements_where_value_is_of_type(m, ast.Constant, return_value=True)
         constants = {e.lineno: e for e in constants}
         filtered = PyParser.filter_calls(calls, "create_service")
-
         for call in filtered:
             args = PyParser.get_args(call, ["srv_type", "srv_name", "callback"])
             srv_type, srv_name, callback = args
@@ -433,7 +461,7 @@ class Package:
         self.nodes: List[Node] = []
         self.launch_scripts: List[LaunchScript] = []
         self.messages: List[MessageType] = []
-        self.services: List["ServiceType"] = []
+        self.services: List[ServiceType] = []
 
         self.package_type = PackageType.NONE
 

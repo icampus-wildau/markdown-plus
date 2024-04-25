@@ -22,6 +22,7 @@ logger = logging.getLogger(__name__)
 
 ignore_line = re.compile(r".*?(" + re.escape(Flags.IGNORE_LINE) + r").*?\n")
 
+
 def main(*args, **kwargs):
     directory = args[0]
     relative_link = directory

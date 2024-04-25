@@ -16,6 +16,7 @@ def clear_git_url(url: str):
     pattern = re.compile(r"oauth2?:.*?@")
     return pattern.sub("", url)
 
+
 def create_git_instructions(git_repo_path: str, kwargs, header_level=2):
     hooks: Hooks = kwargs["hooks"]
 
@@ -106,8 +107,10 @@ def main(*args, **kwargs):
         logger.error(f"Directory {dir_path} for creating installation instruction does not exist")
         return f"# {dir_path} NOT FOUND"
 
-    instructions = [create_git_instructions(dir_path, kwargs, header_level=2),
-                    create_rosepkg_instructions(dir_path, kwargs, header_level=2)]
+    instructions = [
+        create_git_instructions(dir_path, kwargs, header_level=2),
+        create_rosepkg_instructions(dir_path, kwargs, header_level=2),
+    ]
 
     content.append("\n".join([i for i in instructions if i is not None]))
 
