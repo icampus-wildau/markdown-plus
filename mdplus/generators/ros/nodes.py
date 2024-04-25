@@ -82,7 +82,7 @@ class RosNodesMdpModule(MdpGenerator):
 
         return "\n\n".join(content)
 
-    def get_node_section(self, node: Node) -> str:
+    def get_node_section(self, node: Node, comment_as_code_block=False) -> str:
         content = []
         topics = []
 
@@ -146,7 +146,10 @@ class RosNodesMdpModule(MdpGenerator):
                 # f'{topic["Kind"]} of type {topic["Type"]}'
             ]
             if comment is not None and len(comment) > 0:
-                parts.extend([f"```", f"{comment}", f"```"])
+                if comment_as_code_block:
+                    parts.extend([f"```", f"{comment}", f"```"])
+                else:
+                    parts.extend([f"{comment}"])
             part = "\n".join(parts)
             content.append(part)
 

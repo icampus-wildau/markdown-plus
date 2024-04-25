@@ -72,7 +72,7 @@ class MessageType:
 
             self.content = "\n".join(splittedLines)
 
-    def get_wiki_entry(self, header_level: int, replace_root: str = ""):
+    def get_wiki_entry(self, header_level: int, replace_root: str = "", as_code_block=True):
         self.wikiEntry = ""
         self.wikiEntry += header_level * "#"
 
@@ -83,11 +83,13 @@ class MessageType:
         # self.wikiEntry += f" [`{self.name}`]({relative_path})\n"
         self.wikiEntry += f" `{self.name}`\n"
         self.wikiEntry += "\n"
-        self.wikiEntry += "```python\n"
+        if as_code_block: 
+            self.wikiEntry += "```python\n"
         self.wikiEntry += self.content
         self.wikiEntry += "\n"
-        self.wikiEntry += "```\n"
-        self.wikiEntry += "\n"
+        if as_code_block: 
+            self.wikiEntry += "```\n"
+            self.wikiEntry += "\n"
         self.wikiEntry += f"Source: [{relative_path.lstrip('./')}]({relative_path})"
 
         return self.wikiEntry
