@@ -117,7 +117,6 @@ class RosNodesMdpModule(MdpGenerator):
                         "Comment": publisher.comment,
                     }
                 )
-
         for subscription in node.subscriptions:
             if not self.arg_only_commented_subscriptions or len(subscription.comment) > 0:
                 if Flags.IGNORE in subscription.comment:
