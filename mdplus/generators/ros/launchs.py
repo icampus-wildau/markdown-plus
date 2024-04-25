@@ -45,18 +45,21 @@ class RosLaunchMdpModule(MdpGenerator):
                 
                 if len(package.launch_scripts) > 0:
                     for script in package.launch_scripts:
+                        rel_path = file_utils.get_relative_path(script.launch_file_path, self.document.dir_path)
                         scripts.append(
                             {
-                                "Name": script.name,
+                                # "Name": script.name,
                                 "Info": adapt_string_for_table(script.info),
                                 "Script": get_link(
-                                    script.name,
-                                    file_utils.get_relative_path(script.launch_file_path, self.document.dir_path),
+                                    # script.name,
+                                    rel_path.lstrip("/."),
+                                    rel_path,
                                 ),
                             }
                         )
 
-        scripts.sort(key=lambda x: x["Name"])
+        # scripts.sort(key=lambda x: x["Name"])
+        scripts.sort(key=lambda x: x["Script"])
 
         if len(scripts) > 0:
             content.append(markdown_table(scripts).set_params(row_sep="markdown", quote=False, padding_weight="right").get_markdown())
