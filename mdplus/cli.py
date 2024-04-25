@@ -88,6 +88,8 @@ def parse(root_dir, **kwargs):
     workspace = Workspace(root_dir)
     workspace.process(kwargs.get("write_only_new_content", False))
 
+    return 0
+
 
 @execute.command(aliases=["i"])
 @click.option("--verbose", "-v", is_flag=True, help="Print more output.")

@@ -196,10 +196,19 @@ class GeneratedDocument(Document):
         content = self.get_generated_content()
 
         if check_for_new_content:
+            content_lines = content.strip().split("\n")
             with open(file_path, "r", encoding="utf-8") as f:
-                if f.read() == content:
-                    logger.debug(f"Skipping writing document: {file_path}")
+                old_content_lines = f.read().strip().split("\n")
+                no_changes = True
+                for i, line in enumerate(content_lines):
+                    if line.strip() != old_content_lines[i].strip():
+                        no_changes = False
+                        break
+
+                if no_changes and len(content_lines) == len(old_content_lines):
+                    logger.debug(f"Skipping document: {file_path}")
                     return
 
+        # logger.warning(f"Writing document: {file_path}")
         with open(file_path, "w", encoding="utf-8") as f:
             f.write(content)
