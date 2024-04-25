@@ -209,6 +209,9 @@ class GeneratedDocument(Document):
                     logger.debug(f"Skipping document: {file_path}")
                     return
 
-        # logger.warning(f"Writing document: {file_path}")
+        logger.info(f"Writing document: {file_path}")
+        if self.workspace.is_pre_commit_hook:
+            print("Fixing", file_path)
+
         with open(file_path, "w", encoding="utf-8") as f:
             f.write(content)

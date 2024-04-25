@@ -68,7 +68,7 @@ def get_anchor_from_header(header: str):
     """According to https://docs.gitlab.com/ee/user/markdown.html#header-ids-and-links"""
 
     # Remove all punctuation
-    anchor = header.translate(str.maketrans('', '', gitlab_punctuation))
+    anchor = header.translate(str.maketrans("", "", gitlab_punctuation))
 
     # Replace all whitespace with dashes
     splits = re.split(r"\W", anchor)

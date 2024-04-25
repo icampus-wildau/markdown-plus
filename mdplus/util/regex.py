@@ -3,7 +3,11 @@ from typing import List, Union
 
 
 def replace_pattern(
-    file_content: str, pattern: Union[str, re.Pattern], group: Union[int, List[int]] = 0, substitution: str = "", only_first=True
+    file_content: str,
+    pattern: Union[str, re.Pattern],
+    group: Union[int, List[int]] = 0,
+    substitution: str = "",
+    only_first=True,
 ) -> str:
     """Replaces all matches of the given pattern with the given replacement.
 

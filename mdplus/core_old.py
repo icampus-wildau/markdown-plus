@@ -5,8 +5,10 @@ pattern_headers_inside_code = re.compile(r"```(.|[\n\s$^])*?(# .*?\n)(.|[\n\s$^]
 
 pattern_code_block = re.compile(r"```(.|[\n\s$^])*?```")
 
+
 class Replacement:
     """Helper object for replacements of md+ commands in markdown files"""
+
     def __init__(self, text, replaces_text_before_cmd=False):
         """Craete a new Replacement object
 

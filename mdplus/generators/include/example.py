@@ -75,11 +75,10 @@ class ExampleIncluder(MdpGenerator):
                 # If we do not have an explicit header starting with markdowns header-# in the example
                 if not text.strip().startswith("# "):
                     header = self.arg_header or os.path.basename(file_path)
-                    
+
                     # output += f"# [{header}]({relative_link})\n"
                     output += f"# {header}\n"
                     # output += f"See [{relative_link.lstrip('./')}](./" + relative_link + ").\n\n"
-
 
                 # If we have an explicit header in the example
                 else:
@@ -88,14 +87,12 @@ class ExampleIncluder(MdpGenerator):
                     if m is not None:
                         header = self.arg_header or m.group(1)
                         start, end = m.span()
-                        
+
                         # text = text[:start] + f"# [{header}]({relative_link})\n" + text[end:]
                         end = text[end:]
-                        text = text[:start] + f"# {header}\n" 
+                        text = text[:start] + f"# {header}\n"
                         text += f"See [{relative_link.lstrip('./')}](./" + relative_link + ").\n\n"
                         text += end
-
-
 
                     input_text = (
                         input_text[: first_comment_block.start(1)] + text + input_text[first_comment_block.end(1) :]
@@ -128,6 +125,5 @@ class ExampleIncluder(MdpGenerator):
                     output += "\n```\n\n"
 
             output += f"Source of the above code: [{relative_link.lstrip('./')}](./" + relative_link + ").\n\n"
-
 
         return self.remove_empty_lines(output)

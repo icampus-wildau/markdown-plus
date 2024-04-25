@@ -40,17 +40,18 @@ def hasFiles(dirPath, files: List[str]):
 
     return existingCount == len(files)
 
+
 def linux_path(path) -> str:
     return os.path.normpath(path).replace("\\", "/")
+
 
 def get_relative_path(path, root) -> str:
     # Check if the path is a subdirectory of the root
     if path.startswith(root):
-      return linux_path(os.path.join(".", path[len(root):]))
-  
+        return linux_path(os.path.join(".", path[len(root) :]))
+
     # Otherwise, we have to go up the directory tree
-    
-    
+
     # Get the common prefix of the path and the root
     common = os.path.commonprefix([path, root])
     # Get the relative path from the common prefix to the root

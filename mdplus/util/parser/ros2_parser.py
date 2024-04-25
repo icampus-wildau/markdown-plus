@@ -83,11 +83,11 @@ class MessageType:
         # self.wikiEntry += f" [`{self.name}`]({relative_path})\n"
         self.wikiEntry += f" `{self.name}`\n"
         self.wikiEntry += "\n"
-        if as_code_block: 
+        if as_code_block:
             self.wikiEntry += "```python\n"
         self.wikiEntry += self.content
         self.wikiEntry += "\n"
-        if as_code_block: 
+        if as_code_block:
             self.wikiEntry += "```\n"
             self.wikiEntry += "\n"
         self.wikiEntry += f"Source: [{relative_path.lstrip('./')}]({relative_path})"
@@ -156,11 +156,11 @@ class ServiceType:
         # self.wikiEntry += f" [`{self.name}`]({relative_path})\n"
         self.wikiEntry += f" `{self.name}`\n"
         self.wikiEntry += "\n"
-        if as_code_block: 
+        if as_code_block:
             self.wikiEntry += "```python\n"
         self.wikiEntry += self.content
         self.wikiEntry += "\n"
-        if as_code_block: 
+        if as_code_block:
             self.wikiEntry += "```\n"
             self.wikiEntry += "\n"
         self.wikiEntry += f"Source: [{relative_path.lstrip('./')}]({relative_path})"

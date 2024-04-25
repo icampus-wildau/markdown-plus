@@ -99,6 +99,8 @@ class Workspace:
             Root path of the workspace.
         """
 
+        self.is_pre_commit_hook = False
+
         self.root_path = root
         """The root path of the workspace."""
 
@@ -160,7 +162,7 @@ class Workspace:
         ----------
         check_for_new_content : bool, optional
             If True, the workspace will check for new content in the written documents before writing them, by default False.
-        """        
-        
+        """
+
         for doc in self.generated_documents:
             doc.process(check_for_new_content)

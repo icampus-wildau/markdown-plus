@@ -14,6 +14,7 @@ import importlib.resources
 # from mdplus.core import Replacement
 
 from mdplus.logger import Logger
+
 # from mdplus.util.hooks import Hooks
 # from mdplus.util.parser.py_parser import get_args
 # from mdplus.util.markdown import adapt_header_level
@@ -30,15 +31,13 @@ def execute():
     pass
 
 
-
-
-
 @execute.command(aliases=["c"])
 def config():
     """Configure the MD Plus settings in the current project."""
-    
+
     # GitHub / GitLab Flavored Markdown
     pass
+
 
 @execute.command(aliases=["p"])
 @click.option("--verbose", "-v", is_flag=True, help="Print more output.")
@@ -56,6 +55,7 @@ def config():
 )
 def parse(dirname, files, **kwargs: str):
     print("Parsing", dirname, files)
+
 
 @execute.command(aliases=[])
 @click.argument(
@@ -91,9 +91,7 @@ def parse_old(dirname, files, **kwargs: str):
     dirs = []
 
     for section in cfg.sections():
-        if (in_dir := cfg.get(section, "in", fallback=None)) and (
-            out_dir := cfg.get(section, "out", fallback=None)
-        ):
+        if (in_dir := cfg.get(section, "in", fallback=None)) and (out_dir := cfg.get(section, "out", fallback=None)):
             logger.info(f"Found {section} cfg: in='{in_dir}', out='{out_dir}'")
             dirs.append(
                 (
@@ -115,11 +113,7 @@ def parse_old(dirname, files, **kwargs: str):
 
     for in_dir, out_dir in dirs:
         if files is None or len(files) == 0:
-            files = [
-                f
-                for f in os.listdir(in_dir)
-                if any([r_check(f) for r_check, r_modify in rules])
-            ]
+            files = [f for f in os.listdir(in_dir) if any([r_check(f) for r_check, r_modify in rules])]
 
         logger.info(f"Parsing the following files in '{in_dir}':")
         files_str = "\n".join([f" - '{f}'" for f in files])
@@ -180,9 +174,7 @@ def parse_old(dirname, files, **kwargs: str):
                             header_level = text_before_cmd.count("#") - 1
                             text_before_cmd = text_before_cmd.strip("#").strip()
                         else:
-                            header_level = (
-                                (match.group(1).count("#") - 1) if match.group(1) else 0
-                            )
+                            header_level = (match.group(1).count("#") - 1) if match.group(1) else 0
                         fun_call = match.group(2)
                         command = match.group(3)
 
@@ -205,9 +197,7 @@ def parse_old(dirname, files, **kwargs: str):
                         cmd_module = modules[command]
                         if cmd_module is not None:
                             # print(cmd_module)
-                            if not hasattr(cmd_module, "main") or not callable(
-                                cmd_module.main
-                            ):
+                            if not hasattr(cmd_module, "main") or not callable(cmd_module.main):
                                 logger.error(
                                     f"Module {cmd_module} is a package or does not have a main() function. Call with package.module!"
                                 )
@@ -226,9 +216,7 @@ def parse_old(dirname, files, **kwargs: str):
                             replacement = fun(*args, **_kwargs)
                             if isinstance(replacement, str):
                                 replacement = Replacement(replacement)
-                            replacement.text = adapt_header_level(
-                                replacement.text, header_level
-                            )
+                            replacement.text = adapt_header_level(replacement.text, header_level)
 
                             # If the replacement replaces the text before the command, adapt the start index
                             if replacement.replaces_text_before_cmd:
@@ -270,12 +258,8 @@ def parse_old(dirname, files, **kwargs: str):
                             continue
 
                         destination = os.path.abspath(os.path.join(in_dir, link))
-                        new_link = os.path.join(
-                            ".", os.path.relpath(destination, out_dir)
-                        ).replace("\\", "/")
-                        logger.debug(
-                            f"Transforming relative link:\n  {link} to\n  {new_link}"
-                        )
+                        new_link = os.path.join(".", os.path.relpath(destination, out_dir)).replace("\\", "/")
+                        logger.debug(f"Transforming relative link:\n  {link} to\n  {new_link}")
 
                         text = text[: match.start(2)] + new_link + text[match.end(2) :]
                         start_pos = match.start(2) + len(new_link)
@@ -294,9 +278,7 @@ def get_template(name: str) -> str:
 
 @execute.command(aliases=["i"])
 @click.argument("dirname")
-@click.option(
-    "--overwrite", "-O", default=False, is_flag=True, help="Overwrites existing files."
-)
+@click.option("--overwrite", "-O", default=False, is_flag=True, help="Overwrites existing files.")
 @click.option(
     "--with-examples",
     "-e",
@@ -359,9 +341,7 @@ def init(dirname, overwrite, with_examples):
         with open(os.path.join(abs_path, "_README.md"), "r") as f:
             readme_content = f.read()
 
-        readme_content = readme_content.replace(
-            '# #MD+:include.examples("./examples/")\n\n', ""
-        )
+        readme_content = readme_content.replace('# #MD+:include.examples("./examples/")\n\n', "")
 
         with open(os.path.join(abs_path, "_README.md"), "w") as f:
             f.write(readme_content)

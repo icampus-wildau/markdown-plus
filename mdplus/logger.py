@@ -10,6 +10,7 @@ console = Console()
 
 logger = logging.getLogger(__name__)
 
+
 class Logger:
     @staticmethod
     def get_console():

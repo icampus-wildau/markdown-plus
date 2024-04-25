@@ -224,7 +224,7 @@ class PyParser:
         else:
             start = lines[line - 1][col:]
             end = lines[end_line - 1][:end_col]
-            middle = lines[line:end_line - 1]
+            middle = lines[line : end_line - 1]
             return "\n".join([start] + middle + [end])
 
     @staticmethod
@@ -272,9 +272,7 @@ class PyParser:
 
     @staticmethod
     def get_elements_where_value_is_of_type(
-            item: ast.ClassDef | ast.FunctionDef,
-            t: Type[T],
-            return_value=False
+        item: ast.ClassDef | ast.FunctionDef, t: Type[T], return_value=False
     ) -> list[T]:
         res = []
         for i in item.body:
@@ -346,8 +344,9 @@ class PyParser:
             # raise ValueError(f"Unknown type {type(item)}")
 
     @staticmethod
-    def get_doc_string(item: ast.ClassDef | ast.FunctionDef | ast.Expr | ast.Constant, only_first_line=False,
-                       remove_indentation=True) -> str:
+    def get_doc_string(
+        item: ast.ClassDef | ast.FunctionDef | ast.Expr | ast.Constant, only_first_line=False, remove_indentation=True
+    ) -> str:
         """Gets a doc string from a class or function or a docstring expression"""
 
         doc: str = None
@@ -400,7 +399,7 @@ if __name__ == "__main__":
     from mistletoe.ast_renderer import ASTRenderer, get_ast
 
     file_path = "C:/Users/schoc/Documents/Studium/Git/ROS-E/software/ros2-packages/displays/docs/HOOKS.md"
-    with open(file_path, 'r') as fin:
+    with open(file_path, "r") as fin:
         # ast = mistletoe.ast_renderer.get_ast(fin.read())
         d = Document(fin)
         sss = str(d)

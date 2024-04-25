@@ -3,5 +3,6 @@
   entry: mdplus p
   language: python
   files: "^$"
+  args: ["-q", "--write-only-new-content", "--is-pre-commit-hook"]
   always_run: true
   minimum_pre_commit_version: '2.9.2'

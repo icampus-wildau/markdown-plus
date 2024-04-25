@@ -175,7 +175,9 @@ class RosNodesMdpModule(MdpGenerator):
         if len(topics) > 0:
             topics.sort(key=lambda x: x["Topic"])
             table = (
-                markdown_table(topics).set_params(row_sep="markdown", quote=False, padding_weight="right").get_markdown()
+                markdown_table(topics)
+                .set_params(row_sep="markdown", quote=False, padding_weight="right")
+                .get_markdown()
             )
             content.insert(2, "**Publisher, Subscriber and Services of this node**")
             content.insert(3, table)

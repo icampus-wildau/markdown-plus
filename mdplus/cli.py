@@ -28,20 +28,19 @@ def setup_logger(**kwargs):
 
     if logger_initialized:
         return
-    
+
     logger_initialized = True
     if kwargs.get("verbose"):
         # FORMAT = "%(asctime)s - %(name)s - %(message)s"
         FORMAT = "%(asctime)s %(message)s"
     else:
         FORMAT = "%(message)s"
-    
+
     # Set the format and handler for the logger
-    handler = RichHandler() 
+    handler = RichHandler()
     formatter = logging.Formatter(fmt=FORMAT, datefmt="[%X]")
     handler.setFormatter(formatter)
     logger.addHandler(handler)
-
 
 
 @click.group(cls=ClickAliasedGroup, context_settings=CONTEXT_SETTINGS)
@@ -52,14 +51,16 @@ def execute():
 @execute.command(aliases=["c"])
 def config():
     """Configure the MD Plus settings in the current project."""
-    
+
     # GitHub / GitLab Flavored Markdown
     pass
+
 
 @execute.command(aliases=["p"])
 @click.option("--verbose", "-v", is_flag=True, help="Print more output.")
 @click.option("--quiet", "-q", is_flag=True, help="Print less output.")
 @click.option("--write-only-new-content", "-N", is_flag=True, help="Only write files with new content.")
+@click.option("--is-pre-commit-hook", is_flag=True, help="Enables output for pre-commit hook.")
 # @click.option("--recursive", "-r", is_flag=True, help="Parse all subdirectories.")
 # @click.option("--root", "-R", help="Root directory parsing the repo.")
 @click.argument(
@@ -82,10 +83,11 @@ def parse(root_dir, **kwargs):
     # If no dirname is specified, use the current working directory
     if root_dir is None or len(root_dir) == 0:
         root_dir = os.getcwd()
-            
+
     logger.debug(f"Starting parsing of {root_dir}")
-    
+
     workspace = Workspace(root_dir)
+    workspace.is_pre_commit_hook = kwargs.get("is_pre_commit_hook", False)
     workspace.process(kwargs.get("write_only_new_content", False))
 
     return 0
@@ -157,7 +159,7 @@ def init(ctx, root_dir, **kwargs):
     if len(template_choices) == 0:
         logger.error("No templates found")
         return
-    
+
     if len(template_choices) == 1:
         answer = list(template_workspaces.keys())[0]
     else:
@@ -169,7 +171,7 @@ def init(ctx, root_dir, **kwargs):
     if answer is None:
         logger.error("No template selected")
         return
-    
+
     selected_workspace = template_workspaces[answer]
 
     # Copy all documents to the target directory
@@ -190,7 +192,6 @@ def init(ctx, root_dir, **kwargs):
 
         if not proceed:
             continue
-        
 
         # Make dirs if not exists
         dir_path = os.path.dirname(file_path)
@@ -218,13 +219,12 @@ def init(ctx, root_dir, **kwargs):
                 backup_path = f"{file_path}{datetime.now().strftime('%Y%m%d%H%M%S')}.bak"
                 logger.info(f"Creating backup of {file_path} @ {backup_path}")
                 os.rename(file_path, backup_path)
-        
+
         logger.info(f"Writing {file_name} @ {file_path}")
         with open(file_path, "w") as f:
             with open(doc.full_path, "r") as template:
                 for line in template:
                     f.write(line)
-
 
     # After template is initialized, ask if mdplus parse should be executed
     if inquirer.confirm("Do you want to parse the initialized template now?", default=True).execute():
